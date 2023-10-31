@@ -21,7 +21,11 @@ class SocialController extends Controller
 
     public function callback($provider)
     {
-        $socialUser = Socialite::driver($provider)->user();
+        try {
+            $socialUser = Socialite::driver($provider)->user();
+        } catch (\Throwable $th) {
+            return redirect(route('login'));
+        }
 
         // check if already exists
         $user = User::where('email', $socialUser->getEmail())->first();
