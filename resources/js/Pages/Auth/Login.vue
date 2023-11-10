@@ -80,21 +80,24 @@ const submit = () => {
                 <span class="text-md font-semi-bold text-gray-800 dark:text-gray-200">Sign in with:</span>
             </div>
             <div class="flex space-x-4">
-                <a href="/auth/google/redirect" class="underline text-sm text-gray-600 hover:text-gray-900">
+                <a href="/auth/google/redirect"
+                    class="underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"
                         class="w-14 h-14 fill-current"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
                         <path
                             d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
                     </svg>
                 </a>
-                <a href="/auth/facebook/redirect" class="underline text-sm text-gray-600 hover:text-gray-900">
+                <a href="/auth/facebook/redirect"
+                    class="underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
                         class="w-14 h-14 fill-current"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
                         <path
                             d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h137.25V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.27c-30.81 0-40.42 19.12-40.42 38.73V256h68.78l-11 71.69h-57.78V480H400a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48z" />
                     </svg>
                 </a>
-                <a href="/auth/github/redirect" class="underline text-sm text-gray-600 hover:text-gray-900">
+                <a href="/auth/github/redirect"
+                    class="underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white">
                     <svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="github-square"
                         class="w-14 h-14 svg-inline--fa fa-github-square fa-w-14 fill-current" role="img"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">

@@ -1,0 +1,8 @@
+{
+    "Administrator": "Administrator",
+    "Administrator users can perform any action.": "Administrator users can perform any action.",
+    "Caller": "Caller",
+    "Caller users have the ability to manage call logs, read and update company status.": "Caller users have the ability to manage call logs, read and update company status.",
+    "Web Consultant": "Web Consultant",
+    "Web Consultant users have the ability to read and update company data.": "Web Consultant users have the ability to read and update company data."
+}

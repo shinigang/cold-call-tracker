@@ -3,6 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\CallController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SocialController;
 
 /*
@@ -33,7 +37,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('companies', CompanyController::class);
+    Route::resource('events', EventController::class)->only(['show', 'store', 'update', 'destroy']);
+    Route::resource('calls', CallController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
 });
+
+require_once __DIR__ . '/jetstream.php';

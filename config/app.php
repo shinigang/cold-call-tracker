@@ -87,6 +87,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Available locales
+    |--------------------------------------------------------------------------
+    |
+    | List all locales that your application works with
+    |
+    */
+    'available_locales' => [
+        'English' => 'en',
+        'German' => 'de-ch',
+        'French' => 'fr-ch',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------
     |
@@ -128,6 +142,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | DEFAULT TEAM AND SUPER USER
+    |--------------------------------------------------------------------------
+    | Default team name and superuser details which will be used for seeding.
+    |
+    */
+
+    'default_team' => env('APP_DEFAULT_TEAM'),
+    'superuser_email' => env('APP_SUPERUSER_EMAIL'),
+    'superuser_name' => env('APP_SUPERUSER_NAME'),
+    'superuser_pass' => env('APP_SUPERUSER_PASS'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
     |
@@ -165,7 +192,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,

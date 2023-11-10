@@ -19,7 +19,7 @@ class JetstreamServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Jetstream::ignoreRoutes();
     }
 
     /**
@@ -45,17 +45,22 @@ class JetstreamServiceProvider extends ServiceProvider
     {
         Jetstream::defaultApiTokenPermissions(['read']);
 
-        Jetstream::role('admin', 'Administrator', [
+        Jetstream::role('admin', __('Administrator'), [
             'create',
             'read',
             'update',
             'delete',
-        ])->description('Administrator users can perform any action.');
+        ])->description(__('Administrator users can perform any action.'));
 
-        Jetstream::role('editor', 'Editor', [
+        Jetstream::role('caller', __('Caller'), [
             'read',
-            'create',
             'update',
-        ])->description('Editor users have the ability to read, create, and update.');
+            'call:create',
+            'call:update',
+        ])->description(__('Caller users have the ability to manage call logs, read and update company status.'));
+
+        Jetstream::role('consultant', __('Web Consultant'), [
+            'read',
+        ])->description(__('Web Consultant users have the ability to read and update company data.'));
     }
 }

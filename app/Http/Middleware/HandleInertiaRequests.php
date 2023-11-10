@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'authUserCurrentTeam.role' => fn () => $request->user() ? $request->user()->teamRole($request->user()->currentTeam) : null,
         ];
     }
 }

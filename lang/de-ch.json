@@ -1,0 +1,8 @@
+{
+    "Administrator": "Verwalter",
+    "Administrator users can perform any action.": "Administrator-Benutzer können jede Aktion durchführen.",
+    "Caller": "Anrufer",
+    "Caller users have the ability to manage call logs, read and update company status.": "Anrufer haben die Möglichkeit, Anrufprotokolle zu verwalten, den Unternehmensstatus zu lesen und zu aktualisieren.",
+    "Web Consultant": "Web-Berater",
+    "Web Consultant users have the ability to read and update company data.": "Web Consultant-Benutzer haben die Möglichkeit, Unternehmensdaten zu lesen und zu aktualisieren."
+}

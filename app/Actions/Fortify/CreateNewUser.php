@@ -3,12 +3,15 @@
 namespace App\Actions\Fortify;
 
 use App\Models\Team;
+use App\Models\TeamInvitation;
 use App\Models\User;
+use Laravel\Jetstream\Jetstream;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Jetstream\Events\TeamMemberAdded;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
-use Laravel\Jetstream\Jetstream;
+use Laravel\Jetstream\Events\AddingTeamMember;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -33,8 +36,26 @@ class CreateNewUser implements CreatesNewUsers
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
+                'current_team_id' => 1,
             ]), function (User $user) {
-                $this->createTeam($user);
+                // $this->createTeam($user);
+
+                // Check team invitation if email exists
+                $invitation = TeamInvitation::where('email', $user->email)->first();
+
+                // Joins the team with invitation or the default team if none
+                $team = Team::find($invitation ? $invitation->team_id : 1);
+                AddingTeamMember::dispatch($team, $user);
+                $team->users()->attach(
+                    $user,
+                    ['role' => $invitation ? $invitation->role : 'caller']
+                );
+                TeamMemberAdded::dispatch($team, $user);
+
+                // Remove team invitation if exists
+                if ($invitation) {
+                    $invitation->delete();
+                }
             });
         });
     }
@@ -46,7 +67,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         $user->ownedTeams()->save(Team::forceCreate([
             'user_id' => $user->id,
-            'name' => explode(' ', $user->name, 2)[0]."'s Team",
+            'name' => explode(' ', $user->name, 2)[0] . "'s Team",
             'personal_team' => true,
         ]));
     }
