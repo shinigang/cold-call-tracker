@@ -6,13 +6,58 @@
     display: none;
 }
 
-/*
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #0003;
+    border-radius: 10px;
+    transition: all .2s ease-in-out;
+}
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+input.el-select-v2__combobox-input:focus { margin: 0 !important; }
+
 .fc .fc-toolbar-title {
     font-size: 1.25rem !important;
     margin: 0;
     font-weight: 500;
     padding: 20px 0 0px 20px;
 }
+
+.fc .fc-button .fc-icon {
+    font-size: 0.875rem !important;
+}
+
+a.fc-col-header-cell-cushion {
+    font-size: .85em !important;
+    line-height: 2.2rem !important;
+    font-weight: 600 !important;
+}
+
+.fc .fc-list-sticky .fc-list-day > * {
+    background: var(--fc-page-bg-color);
+}
+
+.fc .fc-daygrid-day-top {
+    flex-direction: inherit !important;
+    padding: 5px !important;
+    font-size: .75em !important;
+}
+
+.fc .fc-button-primary:disabled {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    text-transform: capitalize !important;
+}
+
+html.dark .fc-theme-standard .fc-list-day-cushion {
+    background-color: #888;
+}
+
+/*
 
 .fc .fc-button {
     background-color: #006082 !important;

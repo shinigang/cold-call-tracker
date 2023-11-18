@@ -22,11 +22,24 @@ class CompanyFactory extends Factory
         $statuses = ['Lead', 'Opportunity', 'Customer', 'Close'];
         $status = $statuses[array_rand($statuses)];
 
-        $callStatuses = ["Unprocessed", "Not Reached", "Not Interested", "Doesn't want to be called anymore", "Call again on Date", "Set Appointment Date"];
+        $callStatuses = [
+            "Unprocessed",
+            "Not reached",
+            "Already a customer",
+            "Wrong number",
+            "Has no interest",
+            "Website under construction",
+            "Company non-existent",
+            "Duplicate entry",
+            "Doesn't want to be called anymore",
+            "Call again on Date",
+            "Set Appointment Date"
+        ];
+        // $callStatuses = ["Unprocessed", "Not Reached", "Not Interested", "Doesn't want to be called anymore", "Call again on Date", "Set Appointment Date"];
         $callStatus = $callStatuses[array_rand($callStatuses)];
 
         return [
-            'team_id' => Team::factory(),
+            'team_id' => 1,
             'name' => fake()->company(),
             'description' => fake()->catchPhrase(),
             'industry' => fake()->bs(),
@@ -35,10 +48,10 @@ class CompanyFactory extends Factory
             'linkedin' => null,
             'referral_source' => null,
             'address_street' => fake()->streetAddress(),
-            'address_city' => fake()->city(),
-            'address_state' => fake()->state(),
+            'address_city' => null,
+            'address_state' => null,
             'address_country' => fake()->country(),
-            'address_zipcode' => fake()->postcode(),
+            'address_zipcode' => null,
             'status' => $status,
             'call_status' => $callStatus,
             'follow_up_date' => null,

@@ -11,15 +11,21 @@
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.0",
         "laravel/sanctum": "^3.3",
+        "laravel/scout": "^10.5",
         "laravel/socialite": "^5.10",
         "laravel/tinker": "^2.8",
+        "maatwebsite/excel": "^3.1",
+        "meilisearch/meilisearch-php": "^1.4",
+        "nnjeim/world": "^1.1",
         "pusher/pusher-php-server": "^7.2",
+        "spatie/laravel-google-calendar": "^3.7",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
+        "laravel/telescope": "^4.17",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "pestphp/pest": "^2.0",
@@ -55,7 +61,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/telescope"
+            ]
         }
     },
     "config": {

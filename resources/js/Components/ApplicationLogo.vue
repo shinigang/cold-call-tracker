@@ -1,6 +1,6 @@
 <template>
     <svg viewBox="0 0 810 809.999993" xmlns="http://www.w3.org/2000/svg"
-        class="fill-black dark:fill-white text-white dark:text-black">
+        class="fill-indigo-500 dark:fill-white text-white dark:text-black">
         <defs>
             <clipPath id="88620c0d16">
                 <path d="M 50.808594 50 L 759.558594 50 L 759.558594 760 L 50.808594 760 Z M 50.808594 50 "

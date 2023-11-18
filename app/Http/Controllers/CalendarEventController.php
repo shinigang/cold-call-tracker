@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event;
+use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class EventController extends Controller
+class CalendarEventController extends Controller
 {
     /**
      * Store a newly created resource in storage.
@@ -20,7 +20,7 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Event $event)
+    public function show(CalendarEvent $calendarEvent)
     {
         //
     }
@@ -28,7 +28,7 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request, CalendarEvent $calendarEvent)
     {
         //
     }
@@ -36,7 +36,7 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Event $event)
+    public function destroy(CalendarEvent $calendarEvent)
     {
         //
     }

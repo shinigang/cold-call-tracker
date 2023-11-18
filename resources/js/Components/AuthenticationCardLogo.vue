@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/vue3';
 <template>
     <Link :href="'/'">
     <svg viewBox="0 0 810 374.999991" xmlns="http://www.w3.org/2000/svg" height="200"
-        class="fill-black dark:fill-white text-white dark:text-black">
+        class="fill-indigo-500 dark:fill-white text-white dark:text-black">
         <defs>
             <g />
             <clipPath id="8a202d1562">

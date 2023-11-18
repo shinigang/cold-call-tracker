@@ -7,6 +7,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import ThemeToggle from '@/Components/ThemeToggle.vue';
 
 defineProps({
     title: String,
@@ -48,7 +49,7 @@ const logout = () => {
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-4 sm:-my-px sm:ms-3 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
@@ -68,8 +69,8 @@ const logout = () => {
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <div class="ms-3 relative">
+                        <div class="hidden sm:flex sm:items-center sm:ms-4">
+                            <div class="ms-3 pe-3 relative border-r border-gray-100 dark:border-gray-700">
                                 <!-- Teams Dropdown -->
                                 <span v-if="$page.props.jetstream.hasTeamFeatures && $page.props.auth.user.id != 1"
                                     class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800">
@@ -141,6 +142,10 @@ const logout = () => {
                                         </div>
                                     </template>
                                 </Dropdown>
+                            </div>
+
+                            <div class="ms-3 relative">
+                                <ThemeToggle />
                             </div>
 
                             <!-- Settings Dropdown -->

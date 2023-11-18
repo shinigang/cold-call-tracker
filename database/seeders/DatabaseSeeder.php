@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
                 return tap(User::create([
                     'name' => config('app.superuser_name'),
                     'email' => config('app.superuser_email'),
+                    'current_team_id' => 1,
                     'password' => Hash::make(config('app.superuser_pass'))
                 ]), function (User $user) {
                     $user->ownedTeams()->save(Team::forceCreate([

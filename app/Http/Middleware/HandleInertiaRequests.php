@@ -3,8 +3,10 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
+use App\Models\CallStatus;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,6 +39,9 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'authUserCurrentTeam.role' => fn () => $request->user() ? $request->user()->teamRole($request->user()->currentTeam) : null,
+            'callStatuses' => fn () => Cache::remember('call_status_list', 60 * 60, function () {
+                return CallStatus::with('group')->get();
+            })
         ];
     }
 }
