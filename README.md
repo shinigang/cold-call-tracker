@@ -29,23 +29,35 @@ Call Tracker is a Mini CRM app for tracking cold calls to customers.
     ```
     alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
     sail artisan migrate
+    sail artisan db:seed
     sail artisan db:seed --class=WorldSeeder
     ```
 
 6. Run Factory and update meilisearch indexes (optional)
+
     ```
-    sail artisan
+    sail artisan tinker
+    Company::factory()->count(1000)->create();
+    exit
     sail artisan scout:import "App\Models\Company"
+    ```
+
+7. Run google calendar quickstart script to generate oauth-token.json:
+    ```
+    sail artisan google-calendar:quickstart
     ```
 
 ## Development
 
 1. Make sure Docker Desktop is running
-2. Run the following:
+2. Open a terminal and run:
     ```
     ./vendor/bin/sail up
+    ```
+3. Open another terminal and run the following:
+    ```
     alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
     sail npm install
-    sail npm run build
+    sail npm run dev
     ```
-3. Open localhost in your browser. Default user and password is in .env file
+4. Open localhost in your browser. Default user and password is in .env file

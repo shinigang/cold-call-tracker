@@ -15,10 +15,10 @@ defineProps({
 
     <div
         class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
-        <div class="sm:fixed sm:top-0 sm:start-0 p-4 text-start z-10">
+        <div class="fixed top-0 start-0 p-4 text-start z-10">
             <ThemeToggle />
         </div>
-        <div v-if="canLogin" class="sm:fixed sm:top-0 sm:end-0 p-6 text-end z-10">
+        <div v-if="canLogin" class="fixed top-0 end-0 p-6 text-end z-10">
             <Link v-if="$page.props.auth.user" :href="route('dashboard')"
                 class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
             Dashboard</Link>
@@ -35,7 +35,7 @@ defineProps({
         </div>
 
         <div class="max-w-7xl mx-auto p-6 lg:p-8">
-            <div class="flex justify-center">
+            <div class="flex justify-center mt-10 sm:mt-0">
                 <svg viewBox="0 0 62 65" fill="none" xmlns="http://www.w3.org/2000/svg"
                     class="h-16 w-auto bg-gray-100 dark:bg-gray-900">
                     <path

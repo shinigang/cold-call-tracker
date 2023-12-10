@@ -24,6 +24,10 @@ class ContactPerson extends Model
         'verified'
     ];
 
+    protected $casts = [
+        'verified' => 'boolean'
+    ];
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

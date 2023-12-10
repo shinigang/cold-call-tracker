@@ -230,7 +230,7 @@ const logout = () => {
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('companies.index')" :active="route().current('companies.index')"
-                            v-if="['Administrator', 'Owner'].includes($page.props.authUserCurrentTeam.role.name)">
+                            v-if="['admin', 'owner'].includes($page.props.authUserCurrentTeam.role.key)">
                             Companies
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('calls.index')" :active="route().current('calls.index')"

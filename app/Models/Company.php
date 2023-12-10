@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class Company extends Model
 {
@@ -42,9 +43,19 @@ class Company extends Model
         'assigned_consultant',
     ];
 
+    protected $casts = [
+        'follow_up_date' => 'datetime',
+        'appointment_date' => 'datetime'
+    ];
+
     public function actionLogs(): HasMany
     {
         return $this->hasMany(ActionLog::class);
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class);
     }
 
     public function assignedCaller(): BelongsTo
@@ -94,9 +105,17 @@ class Company extends Model
             'website' => $array['website'],
             'email' => $array['email'],
             'linkedin' => $array['linkedin'],
+            'address_street' => $array['address_street'],
             'address_city' => $array['address_city'],
             'address_state' => $array['address_state'],
             'address_country' => $array['address_country']
         ];
+    }
+
+    public static function booted()
+    {
+        static::creating(function (Company $company) {
+            $company->uuid = Str::uuid();
+        });
     }
 }

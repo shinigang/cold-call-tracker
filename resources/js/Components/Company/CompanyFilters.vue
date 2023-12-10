@@ -24,7 +24,7 @@ const selectedCountry = ref(props.filters.country ? props.countries.find(cntry =
 const selectedState = ref(props.filters.state);
 const selectedCity = ref(props.filters.city);
 
-const { selectOptions: callStatusOptions } = useSelectOptions(page.props.callStatuses, 'status', 'status');
+const callStatuses = ref(page.props.callStatuses);
 
 const countryStates = ref([]);
 const { selectOptions: countryOptions } = useSelectOptions(props.countries, 'iso2', 'name');
@@ -85,8 +85,11 @@ onMounted(() => {
         class="focus-within:border-indigo-400 lg:h-12 mx-3 mb-5 searh-field flex flex-col lg:flex-row items-center border-0 lg:border-b transition-all js-search border-gray-300 dark:border-gray-700">
         <input v-model="searchKeyword" type="text" placeholder="Type here to search companies..." @input="searchCompanies"
             class="placeholder:italic placeholder:text-slate-400 grow w-full lg:w-auto h-12 lg:h-auto bg-transparent text-black dark:text-gray-300 border-b border-gray-300 dark:border-gray-700 lg:border-0 mb-2 lg:mb-0 text-medium border-0 pb-0 focus:outline-none focus:ring-transparent focus:border-purple-100 ltr:pr-10 rtl:pl-10">
-        <el-select-v2 v-model="callStatus" filterable :options="callStatusOptions" @change="searchCompanies"
-            placeholder="Select Call Status" clearable class="w-full lg:w-[165px]" />
+        <el-select v-model="callStatus" filterable clearable placeholder="Select Call Status" class="w-full lg:w-[165px]"
+            @change="searchCompanies">
+            <el-option v-for="callStatus in callStatuses" :key="callStatus.status" :label="callStatus.status"
+                :value="callStatus.status" />
+        </el-select>
         <el-select-v2 v-model="selectedCountry" filterable :options="countryOptions" @change="onSelectCountry"
             placeholder="Select Country" clearable class="mt-2 lg:mt-0 lg:ms-2 w-full lg:w-[165px]" />
         <el-select-v2 v-model="selectedState" filterable :options="states" @change="onSelectState"

@@ -28,7 +28,7 @@ const calcPercentage = (totalValue, partialValue) => {
     if (totalValue == 0) {
         return 0;
     }
-    return ((partialValue / totalValue) * 100).toFixed(2);
+    return ((partialValue / totalValue) * 100).toFixed(0);
 };
 
 const calcDiffPercentage = (initialValue, finalValue) => {
@@ -36,7 +36,11 @@ const calcDiffPercentage = (initialValue, finalValue) => {
         return 0;
     }
     const diff = finalValue - initialValue;
-    const percentage = ((diff / initialValue) * 100).toFixed(2);
+    let percentage = 100;
+    if (initialValue > 0) {
+        percentage = ((diff / initialValue) * 100).toFixed(0);
+    }
+
     return percentage;
 };
 </script>

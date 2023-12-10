@@ -7,6 +7,8 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\CallController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ContactNumberController;
+use App\Http\Controllers\ContactPersonController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SocialController;
 use Spatie\GoogleCalendar\Event;
@@ -68,14 +70,19 @@ Route::middleware([
     Route::post('/dashboard/company/{id}', [DashboardController::class, 'company'])->name('dashboard.company');
     Route::post('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
 
-    Route::resource('companies', CompanyController::class);
+    Route::resource('companies', CompanyController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::put('company/{company}/restore', [CompanyController::class, 'restore'])->name('companies.restore');
     Route::post('companies-import', [CompanyController::class, 'import'])->name('companies.import');
     Route::get('companies-export', [CompanyController::class, 'export'])->name('companies.export');
 
     Route::resource('calls', CallController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::get('calls-export', [CallController::class, 'export'])->name('calls.export');
 
     Route::resource('calendar-events', CalendarEventController::class)->only(['show', 'store', 'update', 'destroy']);
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+
+    Route::resource('contact-persons', ContactPersonController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('contact-numbers', ContactNumberController::class)->only(['store', 'update', 'destroy']);
 });
 
 require_once __DIR__ . '/jetstream.php';

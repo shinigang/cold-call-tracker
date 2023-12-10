@@ -18,7 +18,13 @@
     border-radius: 10px;
 }
 
+html.dark select > option {
+    background: #333;
+    color: #eee;
+}
+
 input.el-select-v2__combobox-input:focus { margin: 0 !important; }
+.el-input__inner:focus { outline: 0; box-shadow: none; }
 
 .fc .fc-toolbar-title {
     font-size: 1.25rem !important;

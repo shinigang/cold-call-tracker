@@ -7,25 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ContactNumber extends Model
+class Assignment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'contact_numbers';
-
-    protected $fillable = [
-        'company_id',
-        'label',
-        'number',
-        'verified'
-    ];
-
-    protected $casts = [
-        'verified' => 'boolean'
-    ];
+    protected $fillable = ['company_id', 'user_id', 'role'];
 
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

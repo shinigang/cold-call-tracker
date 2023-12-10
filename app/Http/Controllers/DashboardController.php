@@ -17,8 +17,7 @@ class DashboardController extends Controller
     public function index(AnalyticsService $analyticsService)
     {
         $analytics = $analyticsService->getAnalytics();
-        $selectedCompany = request()->has('company') ? $this->selectCompany(request()->input('company')) : null;
-
+        $selectedCompany = isset(request()->company) ? $this->selectCompany(request()->input('company')) : null;
         $companies = $this->searchCompany();
 
         if (request()->wantsJson() && isset(request()->page)) {
@@ -37,6 +36,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'analytics' => $analytics,
+            'new' => request()->input('new') ?? 'false',
             'company' => $selectedCompany,
             'companies' => $companies,
             'filters' => [
@@ -106,9 +106,14 @@ class DashboardController extends Controller
         $companies = $company->query(fn (Builder $query) => $query->with([
             'contactPersons',
             'contactNumbers',
-            'calls',
-            'comments'
-        ]))->paginate($limit)->withQueryString();
+            'assignedCaller',
+            'assignedConsultant',
+            'calendarEvents.user',
+            'calls.user',
+            'comments.user',
+            'actionLogs.user',
+            'assignments.user'
+        ]))->orderBy('name')->paginate($limit)->withQueryString();
 
         return $companies;
     }
@@ -120,8 +125,18 @@ class DashboardController extends Controller
 
     private function selectCompany($company_id)
     {
-        $companyRelationships = ['actionLogs', 'calendarEvents', 'calls', 'comments', 'contactPersons', 'contactNumbers'];
-        return Company::with($companyRelationships)->find($company_id);
+        $companyRelationships = [
+            'contactPersons',
+            'contactNumbers',
+            'assignedCaller',
+            'assignedConsultant',
+            'calendarEvents.user',
+            'calls.user',
+            'comments.user',
+            'actionLogs.user',
+            'assignments.user'
+        ];
+        return Company::with($companyRelationships)->whereUuid($company_id)->first();
     }
 
     public function analytics(AnalyticsService $analyticsService)

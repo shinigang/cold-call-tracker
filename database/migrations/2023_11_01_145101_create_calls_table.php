@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('contact_number');
             $table->dateTime('called_at', $precision = 0);
             $table->string('status');
-            // ['Set Appointment Date', 'Call Again on Date', 'Not Reached', 'Not Interested', 'Does not want to be called anymore', 'Happy with website']
+            // ['Set Appointment Date', 'Call again on Date', 'Not Reached', 'Not Interested', 'Does not want to be called anymore', 'Happy with website']
             $table->dateTime('follow_up_at', $precision = 0)->nullable();
             $table->dateTime('appointment_at', $precision = 0)->nullable();
 

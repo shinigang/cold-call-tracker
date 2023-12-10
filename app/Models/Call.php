@@ -16,8 +16,11 @@ class Call extends Model
 {
     use BroadcastsEvents, HasFactory, SoftDeletes;
 
+    protected $fillable = ['user_id', 'company_id', 'contact_number', 'called_at', 'status', 'follow_up_at', 'appointment_at', 'consultant_id', 'meeting_email'];
 
-    protected $fillable = ['user_id', 'company_id', 'contact_number', 'called_at', 'status', 'follow_up_at', 'appointment_at'];
+    protected $casts = [
+        'called_at' => 'datetime'
+    ];
 
     public function user(): BelongsTo
     {
@@ -27,6 +30,11 @@ class Call extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function consultant(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'consultant_id');
     }
 
     public function calendarEvent(): HasOne

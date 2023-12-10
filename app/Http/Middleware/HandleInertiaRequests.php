@@ -34,6 +34,9 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'flash' => [
+                'message' => fn () => $request->session()->get('message')
+            ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
@@ -41,7 +44,10 @@ class HandleInertiaRequests extends Middleware
             'authUserCurrentTeam.role' => fn () => $request->user() ? $request->user()->teamRole($request->user()->currentTeam) : null,
             'callStatuses' => fn () => Cache::remember('call_status_list', 60 * 60, function () {
                 return CallStatus::with('group')->get();
-            })
+            }),
+            'consultants' => fn () => ($request->user() ? Cache::remember('team_consultants_list', 60 * 60, function () {
+                return request()->user()->currentTeam->users->where('role', '!=', 'caller')->all();
+            }) : [])
         ];
     }
 }

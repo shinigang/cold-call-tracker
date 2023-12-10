@@ -137,8 +137,8 @@ return [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
             'companies' => [
-                'filterableAttributes' => ['id', 'name', 'call_status', 'address_city', 'address_state', 'address_country'],
-                'sortableAttributes' => ['name', 'created_at', 'updated_at'],
+                'filterableAttributes' => ['id', 'name', 'call_status', 'address_street', 'address_city', 'address_state', 'address_country'],
+                'sortableAttributes' => ['name'],
             ],
         ],
     ],

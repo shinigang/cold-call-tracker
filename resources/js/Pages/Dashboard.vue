@@ -18,41 +18,46 @@ const props = defineProps({
     companies: Object,
     filters: Object,
     countries: Object,
+    new: String,
 });
 
 const totalCompanies = ref(props.companies.total);
 const companyItems = ref(props.companies.data);
 const nextPageUrl = ref(props.companies.next_page_url);
 const activeCompany = ref(props.company);
+const hasNextCompany = ref(false);
 const activeCallersData = ref(props.analytics.activeCallers);
 const callStatsData = ref(props.analytics.calls);
 
 const callStatsDuration = ref(30);
 const nextCompany = ref(null);
 
-const addMode = ref(false);
+const addMode = ref(props.new == 'true');
 
 const companiesLoading = ref(false);
 const companiesLoadedAll = computed(() => companyItems.value.length >= totalCompanies.value);
 const companiesScrollDisabled = computed(() => companiesLoading.value || companiesLoadedAll.value);
 
-// const selectCompany = async (companyId) => {
-//     const response = await axios.post(route(`dashboard/company/${companyId}`));
-//     activeCompany.value = response.data;
-//     addMode.value = false;
-// };
-
-const selectCompany = (company, index) => {
+const selectCompany = (company) => {
+    const index = companyItems.value.findIndex(item => item.uuid == company.uuid);
     activeCompany.value = company;
     addMode.value = false;
 
     const nextCompanyIndex = index + 1;
     if (companyItems.value[nextCompanyIndex]) {
+        hasNextCompany.value = true;
         nextCompany.value = {
             index: nextCompanyIndex,
             company: companyItems.value[nextCompanyIndex]
         };
     }
+    else {
+        hasNextCompany.value = false;
+    }
+    const newURL = new URL(window.location);
+    newURL.searchParams.set('company', company.uuid);
+    newURL.searchParams.delete('new');
+    window.history.pushState({}, '', newURL);
 };
 
 const selectNextCompany = () => {
@@ -74,25 +79,13 @@ const selectNextCompany = () => {
     });
 };
 
-const addCompanyEntryHandler = () => {
-    addMode.value = true;
-};
+const unselectCompany = () => {
+    activeCompany.value = null;
+    hasNextCompany.value = false;
 
-const updateAnalytics = async (statsType = 'all', interval) => {
-
-    if (statsType == 'all' || statsType == 'calls') {
-        callStatsDuration.value = interval;
-    }
-    const response = await axios.post(route('dashboard.analytics'), {
-        stats_type: statsType,
-        duration: interval
-    });
-    if (statsType == 'all' || statsType == 'calls') {
-        callStatsData.value = response.data.calls;
-    }
-    if (statsType == 'all' || statsType == 'activeCallers') {
-        activeCallersData.value = response.data.activeCallers;
-    }
+    const newURL = new URL(window.location);
+    newURL.searchParams.delete('company');
+    window.history.pushState({}, '', newURL);
 }
 
 const loadCompanies = async () => {
@@ -128,10 +121,56 @@ const searchCompany = async (keyword, callStatus, country, state, city) => {
 
 const isActiveCompany = (company) => {
     if (activeCompany.value) {
-        return activeCompany.value.id == company.id;
+        return activeCompany.value.uuid == company.uuid;
     }
     return false;
 };
+
+const onAddCompanyEntry = () => {
+    addMode.value = true;
+    activeCompany.value = null;
+    hasNextCompany.value = false;
+
+    const newURL = new URL(window.location);
+    newURL.searchParams.delete('company');
+    newURL.searchParams.set('new', 'true');
+    window.history.pushState({}, '', newURL);
+};
+
+const onCancelAddCompany = () => {
+    addMode.value = false;
+
+    const newURL = new URL(window.location);
+    newURL.searchParams.delete('new');
+    window.history.pushState({}, '', newURL);
+}
+
+const onCompanyAdded = (companyData) => {
+    companyItems.value = [companyData, ...companyItems.value];
+    selectCompany(companyData);
+};
+
+const onCompanyUpdated = (updatedData) => {
+    const companyToUpdateIndex = companyItems.value.findIndex(companyItem => companyItem.id == updatedData.id);
+    companyItems.value[companyToUpdateIndex] = updatedData;
+    activeCompany.value = updatedData;
+};
+
+const updateAnalytics = async (statsType = 'all', interval) => {
+    if (statsType == 'all' || statsType == 'calls') {
+        callStatsDuration.value = interval;
+    }
+    const response = await axios.post(route('dashboard.analytics'), {
+        stats_type: statsType,
+        duration: interval
+    });
+    if (statsType == 'all' || statsType == 'calls') {
+        callStatsData.value = response.data.calls;
+    }
+    if (statsType == 'all' || statsType == 'activeCallers') {
+        activeCallersData.value = response.data.activeCallers;
+    }
+}
 
 onMounted(() => {
     Echo.private(`user-activities`)
@@ -139,11 +178,10 @@ onMounted(() => {
             updateAnalytics('activeCallers');
         });
 
-    // Echo.private(`call-updates`)
-    //     .listenToAll((event, data) => {
-    //         updateAnalytics('calls', callStatsDuration.value);
-    //         console.log(event, data);
-    //     });
+    Echo.private(`call-updates`)
+        .listenToAll((event, data) => {
+            updateAnalytics('calls', callStatsDuration.value);
+        });
 
     const elementToScroll = document.querySelector('.is-active');
     if (elementToScroll) {
@@ -156,7 +194,7 @@ onMounted(() => {
     <AppLayout title="Dashboard">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Dashboard
+                Acquisition Dashboard
             </h2>
         </template>
 
@@ -184,10 +222,9 @@ onMounted(() => {
                                         <div class="m-0 h-[310px] overflow-y-auto" v-infinite-scroll="loadCompanies"
                                             :infinite-scroll-disabled="companiesScrollDisabled">
                                             <ul class="divide-y divide-dashed divide-gray-200 dark:divide-gray-700">
-                                                <CompanyItem v-for="(companyItem, index) in companyItems"
-                                                    :key="companyItem.id"
+                                                <CompanyItem v-for="(companyItem) in companyItems" :key="companyItem.id"
                                                     :class="`group/company ${isActiveCompany(companyItem) ? 'is-active' : ''}`"
-                                                    :company="companyItem" @click="selectCompany(companyItem, index)" />
+                                                    :company="companyItem" @click="selectCompany(companyItem)" />
                                             </ul>
                                             <p v-if="companiesLoading" class="text-center">
                                                 <el-tag size="large" type="info" effect="dark" round>
@@ -213,15 +250,16 @@ onMounted(() => {
                                     <el-empty v-else class="h-[calc(100%-60px)]" description="No company data available." />
                                     <button
                                         class="w-full text-sm py-1 font-bold rounded-md text-center border-dashed border-2 border-gray-300 dark:border-gray-700 hover:border-gray-500 dark:hover:border-gray-600 text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-                                        @click="addCompanyEntryHandler">+ Add new entry</button>
+                                        @click="onAddCompanyEntry">+ Add new entry</button>
                                 </div>
                                 <ActiveCallers class="flex-none p-2 h-[250px]" :callers="activeCallersData" />
                             </div>
                         </div>
-                        <div class="grow w-full p-2">
-                            <NewCompany v-if="addMode" />
+                        <div class="grow w-full p-2 h-[640px]">
+                            <NewCompany v-if="addMode" @company-added="onCompanyAdded" @cancel-add="onCancelAddCompany" />
                             <ProcessCompany v-else-if="activeCompany" :company="activeCompany"
-                                @next-company="selectNextCompany" />
+                                :hasNextCompany="hasNextCompany" @next-company="selectNextCompany"
+                                @company-updated="onCompanyUpdated" @unselect-company="unselectCompany" />
                             <div v-else class="pt-20 content-center text-center flex flex-col">
                                 <Pointer class="my-5 h-[300px] text-gray-200 dark:text-gray-700" />
                                 <span class="text-sm text-gray-400">Please select a company.</span>
