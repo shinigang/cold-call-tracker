@@ -37,9 +37,9 @@ class AnalyticsService
                 $successfulCalls = Call::where('status', 'Set Appointment Date')->whereDate('created_at', '>=', now()->subDays($durationDays))->count();
                 $prevSuccessfulCalls = Call::where('status', 'Set Appointment Date')->whereDate('created_at', '<', now()->subDays($durationDays))->count();
                 $followUpCalls = Call::where('status', 'Call Again on Date')->whereDate('created_at', '>=', now()->subDays($durationDays))->count();
-                $prevFollowUpCalls = Call::where('status', 'Call Again on Date')->whereDate('created_at', '>=', now()->subDays($durationDays))->count();
+                $prevFollowUpCalls = Call::where('status', 'Call Again on Date')->whereDate('created_at', '<', now()->subDays($durationDays))->count();
                 $otherCategoryCalls = Call::whereNotIn('status', ['Set Appointment Date', 'Call Again on Date'])->whereDate('created_at', '>=', now()->subDays($durationDays))->count();
-                $prevOtherCategoryCalls = Call::whereNotIn('status', ['Set Appointment Date', 'Call Again on Date'])->whereDate('created_at', '>=', now()->subDays($durationDays))->count();
+                $prevOtherCategoryCalls = Call::whereNotIn('status', ['Set Appointment Date', 'Call Again on Date'])->whereDate('created_at', '<', now()->subDays($durationDays))->count();
             }
 
             $stats = [

@@ -29,10 +29,9 @@ const calendarOptions = {
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <FullCalendar :options='calendarOptions' />
-                <SectionBorder />
             </div>
         </div>
     </AppLayout>

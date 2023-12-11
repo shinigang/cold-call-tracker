@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { usePage, useForm } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 
@@ -34,9 +34,6 @@ const states = ref([]);
 const cities = ref([]);
 
 const onSelectCountry = async () => {
-    form.company.address_state = null;
-    form.company.address_city = null;
-
     if (form.company.address_country) {
         const countryIso2 = page.props.countries.find(pCountry => pCountry.name == form.company.address_country);
         const response = await axios.get(`api/states?filters[country_code]=${countryIso2.iso2}&fields=cities`);
@@ -46,7 +43,9 @@ const onSelectCountry = async () => {
         response.data.data.forEach(state => {
             stateCities = [...stateCities, ...state.cities];
         });
-        cities.value = stateCities.map(city => ({ value: city.name, label: city.name }));
+        if (stateCities.length > 0) {
+            cities.value = stateCities.map(city => ({ value: city.name, label: city.name }));
+        }
     }
     else {
         states.value = [];
@@ -54,17 +53,20 @@ const onSelectCountry = async () => {
     }
 };
 const onSelectState = () => {
-    form.company.address_city = null;
     if (form.company.address_state) {
         const stateData = countryStates.value.filter(cState => cState.name == form.company.address_state)[0];
-        cities.value = stateData.cities.map(city => ({ value: city.name, label: city.name }));
+        if (stateData && stateData.cities.length > 0) {
+            cities.value = stateData.cities.map(city => ({ value: city.name, label: city.name }));
+        }
     }
     else {
         let stateCities = [];
         countryStates.value.forEach(state => {
             stateCities = [...stateCities, ...state.cities];
         });
-        cities.value = stateCities.map(city => ({ value: city.name, label: city.name }));
+        if (stateCities.length > 0) {
+            cities.value = stateCities.map(city => ({ value: city.name, label: city.name }));
+        }
     }
 };
 
@@ -88,14 +90,12 @@ const updateCompany = debounce(async (company, $event, field) => {
             form.clearErrors();
 
             const updateData = {
-                company: company.id,
-                _token: page.props.csrf_token,
+                fieldName: field
             };
             updateData[field] = newValue ?? '';
-            updateData.fieldName = field;
             try {
-                const response = await axios.put(route('companies.update', updateData));
-                emit('detailsUpdated', response.data);
+                const { data } = await axios.put(route('companies.update', company.id), updateData);
+                emit('detailsUpdated', data);
             } catch (e) {
                 form.errors[field] = e.response.data.errors[field][0];
             }
@@ -117,8 +117,8 @@ const updateCompanyModel = debounce(async (company, modelValue, field) => {
         updateData[field] = modelValue;
         updateData.fieldName = field;
         try {
-            const response = await axios.put(route('companies.update', updateData));
-            emit('detailsUpdated', response.data);
+            const { data } = await axios.put(route('companies.update', updateData));
+            emit('detailsUpdated', data);
         } catch (e) {
             form.errors[field] = e.response.data.errors[field][0];
         }
@@ -134,14 +134,21 @@ if (props.errors) {
 
 onMounted(() => {
     if (formMode.value == 'edit') {
-        onSelectCountry();
-        setTimeout(() => {
-            form.company.address_state = props.company.address_state;
-            onSelectState();
-        }, 1000);
-        setTimeout(() => {
-            form.company.address_city = props.company.address_city;
-        }, 2000);
+        if (props.company.address_country) {
+            onSelectCountry();
+            nextTick();
+            if (props.company.address_state) {
+                setTimeout(() => {
+                    form.company.address_state = props.company.address_state;
+                    onSelectState();
+                }, 1000);
+                if (props.company.address_city) {
+                    setTimeout(() => {
+                        form.company.address_city = props.company.address_city;
+                    }, 2000);
+                }
+            }
+        }
     }
 });
 
@@ -168,6 +175,17 @@ watch(
                 form.company = company;
                 if (company.address_country) {
                     onSelectCountry();
+                    if (company.address_state) {
+                        setTimeout(() => {
+                            form.company.address_state = company.address_state;
+                            onSelectState();
+                        }, 1000);
+                        if (company.address_city) {
+                            setTimeout(() => {
+                                form.company.address_city = company.address_city;
+                            }, 2000);
+                        }
+                    }
                 }
             }, 1);
         }

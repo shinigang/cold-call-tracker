@@ -84,7 +84,7 @@ class DashboardController extends Controller
             $user->metadata = $metadata;
             // UPDATE USER METADATA
             $user->save();
-            UserMetadataUpdate::dispatch();
+            UserMetadataUpdate::dispatch($user);
         }
 
         $company = Company::search(request()->input('query'), function ($meilisearch, $query, $options) {
@@ -130,7 +130,7 @@ class DashboardController extends Controller
             'contactNumbers',
             'assignedCaller',
             'assignedConsultant',
-            'calendarEvents.user',
+            // 'calendarEvents.user',
             'calls.user',
             'comments.user',
             'actionLogs.user',

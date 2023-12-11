@@ -3,10 +3,9 @@ import { ref, onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { debounce } from 'lodash';
+import { useSelectOptions } from '@/Composables/useSelectOptions';
 
 const page = usePage();
-
-import { useSelectOptions } from '@/Composables/useSelectOptions';
 
 const props = defineProps({
     filters: Object,
@@ -82,7 +81,7 @@ onMounted(() => {
 
 <template>
     <div
-        class="focus-within:border-indigo-400 lg:h-12 mx-3 mb-5 searh-field flex flex-col lg:flex-row items-center border-0 lg:border-b transition-all js-search border-gray-300 dark:border-gray-700">
+        class="focus-within:border-indigo-400 lg:h-12 mb-5 searh-field flex flex-col lg:flex-row items-center border-0 lg:border-b transition-all js-search border-gray-300 dark:border-gray-700">
         <input v-model="searchKeyword" type="text" placeholder="Type here to search companies..." @input="searchCompanies"
             class="placeholder:italic placeholder:text-slate-400 grow w-full lg:w-auto h-12 lg:h-auto bg-transparent text-black dark:text-gray-300 border-b border-gray-300 dark:border-gray-700 lg:border-0 mb-2 lg:mb-0 text-medium border-0 pb-0 focus:outline-none focus:ring-transparent focus:border-purple-100 ltr:pr-10 rtl:pl-10">
         <el-select v-model="callStatus" filterable clearable placeholder="Select Call Status" class="w-full lg:w-[165px]"

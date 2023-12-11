@@ -90,12 +90,14 @@ class CompanyController extends Controller
                 $this->createContactPersons($company);
                 $this->createContactNumbers($company);
 
-                $actionLog = new ActionLog;
-                $actionLog->company_id = $company->id;
-                $actionLog->user_id = auth()->user()->id;
-                $actionLog->action_type = 'created company';
-                $actionLog->action_value = $company->name;
-                $actionLog->save();
+                if (config('app.save_action_logs')) {
+                    $actionLog = new ActionLog;
+                    $actionLog->company_id = $company->id;
+                    $actionLog->user_id = auth()->user()->id;
+                    $actionLog->action_type = 'created company';
+                    $actionLog->action_value = $company->name;
+                    $actionLog->save();
+                }
 
                 return $company;
             });
@@ -111,7 +113,7 @@ class CompanyController extends Controller
                 'contactNumbers',
                 'assignedCaller',
                 'assignedConsultant',
-                'calendarEvents.user',
+                // 'calendarEvents.user',
                 'calls.user',
                 'comments.user',
                 'actionLogs.user',
@@ -194,13 +196,15 @@ class CompanyController extends Controller
             $company->fill($request->all());
             $company->save();
 
-            $actionLog = new ActionLog;
-            $actionLog->company_id = $company->id;
-            $actionLog->user_id = auth()->user()->id;
-            $actionLog->action_type = 'updated company ' . str_replace("_", " ", $request->fieldName);
-            $actionLog->action_value = $request->input($request->fieldName);
-            $actionLog->action_old_value = $oldValue;
-            $actionLog->save();
+            if (config('app.save_action_logs')) {
+                $actionLog = new ActionLog;
+                $actionLog->company_id = $company->id;
+                $actionLog->user_id = auth()->user()->id;
+                $actionLog->action_type = 'updated company ' . str_replace("_", " ", $request->fieldName);
+                $actionLog->action_value = $request->input($request->fieldName);
+                $actionLog->action_old_value = $oldValue;
+                $actionLog->save();
+            }
 
             if (request()->wantsJson()) {
                 $companyRelationships = [
@@ -208,13 +212,13 @@ class CompanyController extends Controller
                     'contactNumbers',
                     'assignedCaller',
                     'assignedConsultant',
-                    'calendarEvents.user',
+                    // 'calendarEvents.user',
                     'calls.user',
                     'comments.user',
                     'actionLogs.user',
                     'assignments.user',
                 ];
-                return Company::with($companyRelationships)->whereUuid($company->uuid)->first();
+                return Company::with($companyRelationships)->whereId($company->id)->first();
             }
             return redirect()->route('companies.index')->with('message', 'Company Updated Successfully');
         }

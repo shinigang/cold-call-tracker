@@ -1,7 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
-import SectionBorder from '@/Components/SectionBorder.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,7 +24,7 @@ const downloadExport = () => {
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
                 <div class="text-right mb-2">
@@ -87,8 +86,6 @@ const downloadExport = () => {
                 </div>
 
                 <Pagination :links="calls.links" />
-
-                <SectionBorder />
             </div>
         </div>
     </AppLayout>

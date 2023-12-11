@@ -30,7 +30,7 @@ class UpdateUserOnLogout
             $user->metadata = $metadata;
             $user->save();
 
-            broadcast(new UserMetadataUpdate())->toOthers();
+            broadcast(new UserMetadataUpdate($user))->toOthers();
         }
     }
 }

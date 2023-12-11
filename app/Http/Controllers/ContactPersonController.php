@@ -27,12 +27,14 @@ class ContactPersonController extends Controller
         ]);
         $person = ContactPerson::create($validated);
 
-        $actionLog = new ActionLog;
-        $actionLog->company_id = $person->company_id;
-        $actionLog->user_id = auth()->user()->id;
-        $actionLog->action_type = 'added a contact person';
-        $actionLog->action_value = $person->first_name . ' ' . $person->last_name;
-        $actionLog->save();
+        if (config('app.save_action_logs')) {
+            $actionLog = new ActionLog;
+            $actionLog->company_id = $person->company_id;
+            $actionLog->user_id = auth()->user()->id;
+            $actionLog->action_type = 'added a contact person';
+            $actionLog->action_value = $person->first_name . ' ' . $person->last_name;
+            $actionLog->save();
+        }
 
         if ($request->wantsJson() && $request->source == 'dashboard') {
             $companyRelationships = [
@@ -40,7 +42,7 @@ class ContactPersonController extends Controller
                 'contactNumbers',
                 'assignedCaller',
                 'assignedConsultant',
-                'calendarEvents.user',
+                // 'calendarEvents.user',
                 'calls.user',
                 'comments.user',
                 'actionLogs.user',
@@ -78,7 +80,7 @@ class ContactPersonController extends Controller
                 'contactNumbers',
                 'assignedCaller',
                 'assignedConsultant',
-                'calendarEvents.user',
+                // 'calendarEvents.user',
                 'calls.user',
                 'comments.user',
                 'actionLogs.user',
@@ -102,12 +104,14 @@ class ContactPersonController extends Controller
     {
         $companyId = $contactPerson->company_id;
 
-        $actionLog = new ActionLog;
-        $actionLog->company_id = $companyId;
-        $actionLog->user_id = auth()->user()->id;
-        $actionLog->action_type = 'removed a contact person';
-        $actionLog->action_value = $contactPerson->first_name . ' ' . $contactPerson->last_name;
-        $actionLog->save();
+        if (config('app.save_action_logs')) {
+            $actionLog = new ActionLog;
+            $actionLog->company_id = $companyId;
+            $actionLog->user_id = auth()->user()->id;
+            $actionLog->action_type = 'removed a contact person';
+            $actionLog->action_value = $contactPerson->first_name . ' ' . $contactPerson->last_name;
+            $actionLog->save();
+        }
 
         $contactPerson->delete();
         if ($request->wantsJson() && $request->source == 'dashboard') {
@@ -116,7 +120,7 @@ class ContactPersonController extends Controller
                 'contactNumbers',
                 'assignedCaller',
                 'assignedConsultant',
-                'calendarEvents.user',
+                // 'calendarEvents.user',
                 'calls.user',
                 'comments.user',
                 'actionLogs.user',

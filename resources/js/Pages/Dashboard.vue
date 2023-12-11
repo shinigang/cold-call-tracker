@@ -198,13 +198,13 @@ onMounted(() => {
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <CallStats :analytics="callStatsData" @update-analytics="updateAnalytics" />
 
                 <CompanyFilters :filters="filters" :countries="countries" @search-company="searchCompany" />
 
-                <div class="bg-white dark:bg-gray-800 shadow-xl mx-2 rounded-lg">
+                <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg">
                     <div class="grid flex-none lg:flex">
                         <div class="min-w-full lg:min-w-[300px] lg:max-w-[300px] h-[640px]">
                             <div class="flex flex-col h-full border-r border-gray-100 dark:border-gray-700">

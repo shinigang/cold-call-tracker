@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\CallController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactNumberController;
 use App\Http\Controllers\ContactPersonController;
@@ -83,6 +84,12 @@ Route::middleware([
 
     Route::resource('contact-persons', ContactPersonController::class)->only(['store', 'update', 'destroy']);
     Route::resource('contact-numbers', ContactNumberController::class)->only(['store', 'update', 'destroy']);
+
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/search-contacts', [ChatController::class, 'searchContacts'])->name('chat.search-contacts');
+    Route::get('/chat/{id}', [ChatController::class, 'getMessagesFor'])->name('chat.messages');
+    Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
+    Route::post('/chat/read/{id}', [ChatController::class, 'read'])->name('chat.read');
 });
 
 require_once __DIR__ . '/jetstream.php';

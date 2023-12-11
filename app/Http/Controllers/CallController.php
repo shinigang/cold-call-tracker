@@ -46,14 +46,6 @@ class CallController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -78,12 +70,15 @@ class CallController extends Controller
 
         $call = Call::create($validated);
         $company = Company::find($request->company_id);
-        $actionLog = new ActionLog;
-        $actionLog->company_id = $company->id;
-        $actionLog->user_id = auth()->user()->id;
-        $actionLog->action_type = 'added call log';
-        $actionLog->action_value = $call->contact_number . ' - ' . $call->status;
-        $actionLog->save();
+
+        if (config('app.save_action_logs')) {
+            $actionLog = new ActionLog;
+            $actionLog->company_id = $company->id;
+            $actionLog->user_id = auth()->user()->id;
+            $actionLog->action_type = 'added call log';
+            $actionLog->action_value = $call->contact_number . ' - ' . $call->status;
+            $actionLog->save();
+        }
 
         $company->call_status = $call->status;
         if ($company->assigned_caller != $call->user_id) {
@@ -160,7 +155,7 @@ class CallController extends Controller
                 'contactNumbers',
                 'assignedCaller',
                 'assignedConsultant',
-                'calendarEvents.user',
+                // 'calendarEvents.user',
                 'calls.user',
                 'comments.user',
                 'actionLogs.user',
@@ -177,30 +172,6 @@ class CallController extends Controller
         }
 
         return redirect(route('calls.index'));
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Call $call)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Call $call)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Call $call)
-    {
-        //
     }
 
     /**

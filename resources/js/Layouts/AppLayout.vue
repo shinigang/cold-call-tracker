@@ -35,7 +35,7 @@ const logout = () => {
 
         <Banner />
 
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900 pb-4">
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,12 +72,7 @@ const logout = () => {
                         <div class="hidden sm:flex sm:items-center sm:ms-4">
                             <div class="ms-3 pe-3 relative border-r border-gray-100 dark:border-gray-700">
                                 <!-- Teams Dropdown -->
-                                <span v-if="$page.props.jetstream.hasTeamFeatures && $page.props.auth.user.id != 1"
-                                    class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800">
-                                    {{ $page.props.auth.user.current_team.name }}
-                                </span>
-                                <Dropdown v-if="$page.props.jetstream.hasTeamFeatures && $page.props.auth.user.id == 1"
-                                    align="right" width="60">
+                                <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
@@ -95,7 +90,7 @@ const logout = () => {
                                     </template>
 
                                     <template #content>
-                                        <div class="w-60">
+                                        <div class="w-60" v-if="$page.props.auth.user.id == 1">
                                             <!-- Team Management -->
                                             <div class="block px-4 py-2 text-xs text-gray-400">
                                                 Manage Team
@@ -139,6 +134,15 @@ const logout = () => {
                                                     </form>
                                                 </template>
                                             </template>
+                                        </div>
+                                        <div class="w-60">
+                                            <!-- Team Collaboration -->
+                                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                                Team Collaboration
+                                            </div>
+                                            <DropdownLink :href="route('chat.index')">
+                                                Chat Teammates
+                                            </DropdownLink>
                                         </div>
                                     </template>
                                 </Dropdown>
@@ -336,9 +340,34 @@ const logout = () => {
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="mx-3 md:mx-0">
                 <slot />
+
             </main>
+
+            <footer class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                <div
+                    class="bg-white rounded-lg shadow p-4 dark:bg-gray-800 w-full mx-auto max-w-screen-xl md:flex md:items-center md:justify-between">
+                    <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+                        © 2023
+                        <Link href="/" class="hover:underline">Cold Calls™</Link>. All Rights
+                        Reserved.
+                    </span>
+                    <ul
+                        class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+                        <li>
+                            <a :href="route('terms.show')" target="_blank" class="hover:underline me-4 md:me-6">Terms of
+                                Service
+                            </a>
+                        </li>
+                        <li>
+                            <a :href="route('policy.show')" target="_blank" class="hover:underline me-4 md:me-6">Privacy
+                                Policy
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </footer>
         </div>
     </div>
 </template>

@@ -20,7 +20,7 @@ const getStatusBgColor = (status) => {
 <template>
     <li class="p-2">
         <div
-            class="group/item hover:bg-slate-100 dark:hover:bg-gray-900 group-[.is-active]/company:bg-indigo-100 dark:group-[.is-active]/company:bg-gray-900 flex items-center cursor-pointer space-x-4 rtl:space-x-reverse rounded-lg p-2 transition duration-150 ease-in-out focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50">
+            class="hover:bg-slate-100 dark:hover:bg-gray-900 group-[.is-active]/company:bg-indigo-100 dark:group-[.is-active]/company:bg-gray-900 flex items-center cursor-pointer space-x-4 rtl:space-x-reverse rounded-lg p-2 transition duration-150 ease-in-out focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50">
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-gray-900 truncate dark:text-white">
                     {{ company.name }}

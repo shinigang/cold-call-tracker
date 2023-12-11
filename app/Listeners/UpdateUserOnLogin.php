@@ -30,7 +30,7 @@ class UpdateUserOnLogin
             $user->metadata = $metadata;
             $user->save();
 
-            UserMetadataUpdate::dispatch();
+            UserMetadataUpdate::dispatch($user);
         }
     }
 }

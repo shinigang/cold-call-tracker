@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import { Link, router, usePage, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
-import SectionBorder from '@/Components/SectionBorder.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import ImportCompaniesModal from '@/Components/Company/ImportCompaniesModal.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -19,7 +18,6 @@ const onCompaniesImported = () => {
 const onModalClosed = () => {
     modalVisible.value = false;
 };
-
 
 const page = usePage();
 
@@ -95,7 +93,7 @@ const destroy = (company) => {
         <ImportCompaniesModal :show="modalVisible" @companies-imported="onCompaniesImported"
             @modal-closed="onModalClosed" />
 
-        <div class="py-12">
+        <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
                 <div class="flex flex-col lg:flex-row gap-2 lg:gap-10 justify-center items-center mb-2">
@@ -194,8 +192,6 @@ const destroy = (company) => {
                 </div>
 
                 <Pagination :links="companies.links" />
-
-                <SectionBorder />
             </div>
         </div>
     </AppLayout>
