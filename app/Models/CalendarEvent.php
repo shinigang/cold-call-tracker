@@ -12,7 +12,7 @@ class CalendarEvent extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'company_id', 'start', 'end', 'event_type'];
+    protected $fillable = ['event_type', 'start', 'end', 'emails', 'user_id', 'company_id', 'call_id', 'calendar_id', 'calendar_link', 'meet_link'];
 
     public function user(): BelongsTo
     {

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('event_type')->default('Appointment'); // ['Appointment', 'Follow Up Call']
             $table->dateTime('start', $precision = 0);
             $table->dateTime('end', $precision = 0);
+            $table->json('emails');
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
 

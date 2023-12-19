@@ -125,7 +125,9 @@ const calcDiffPercentage = (initialValue, finalValue) => {
                         {{ calcDiffPercentage(analytics.prevSuccessfulCalls, analytics.successfulCalls) }}%
                     </template>
                     <template #value>
-                        <el-tooltip effect="dark" :content="analytics.successfulCalls.toLocaleString()" placement="right">
+                        <el-tooltip effect="dark"
+                            :content="`${analytics.successfulCalls.toLocaleString()} out of ${analytics.totalCalls.toLocaleString()}`"
+                            placement="right">
                             {{ calcPercentage(analytics.totalCalls, analytics.successfulCalls) }}%
                         </el-tooltip>
                     </template>
@@ -159,7 +161,9 @@ const calcDiffPercentage = (initialValue, finalValue) => {
                         {{ calcDiffPercentage(analytics.prevFollowUpCalls, analytics.followUpCalls) }}%
                     </template>
                     <template #value>
-                        <el-tooltip effect="dark" :content="analytics.followUpCalls.toLocaleString()" placement="right">
+                        <el-tooltip effect="dark"
+                            :content="`${analytics.followUpCalls.toLocaleString()} out of ${analytics.totalCalls.toLocaleString()}`"
+                            placement="right">
                             {{ calcPercentage(analytics.totalCalls, analytics.followUpCalls) }}%
                         </el-tooltip>
                     </template>
@@ -193,7 +197,8 @@ const calcDiffPercentage = (initialValue, finalValue) => {
                         {{ calcDiffPercentage(analytics.prevOtherCategoryCalls, analytics.otherCategoryCalls) }}%
                     </template>
                     <template #value>
-                        <el-tooltip effect="dark" :content="analytics.otherCategoryCalls.toLocaleString()"
+                        <el-tooltip effect="dark"
+                            :content="`${analytics.otherCategoryCalls.toLocaleString()} out of ${analytics.totalCalls.toLocaleString()}`"
                             placement="right">
                             {{ calcPercentage(analytics.totalCalls, analytics.otherCategoryCalls) }}%
                         </el-tooltip>

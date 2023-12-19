@@ -19,6 +19,12 @@ class SocialController extends Controller
 {
     public function redirect($provider)
     {
+        if ($provider == 'google') {
+            return Socialite::driver('google')->scopes([
+                'https://www.googleapis.com/auth/calendar',
+                'https://www.googleapis.com/auth/calendar.events'
+            ])->with(["access_type" => "offline", "prompt" => "consent select_account"])->redirect();
+        }
         return Socialite::driver($provider)->redirect();
     }
 
@@ -43,7 +49,21 @@ class SocialController extends Controller
                 'email' => $socialUser->getEmail(),
                 'nickname' => $socialUser->getNickname(),
                 'password' => Hash::make(Str::random(7)),
-                'current_team_id' => 1
+                'current_team_id' => 1,
+                'availability' => [
+                    'days_of_week' => [
+                        'sun' => false,
+                        'mon' => true,
+                        'tue' => true,
+                        'wed' => true,
+                        'thu' => true,
+                        'fri' => true,
+                        'sat' => false
+                    ],
+                    'shift_start' => '08:00',
+                    'shift_end' => '17:00',
+                    'meeting_duration' => 60
+                ]
             ]);
             // create socials for user
             $user->socials()->create([
@@ -92,6 +112,17 @@ class SocialController extends Controller
         }
         // login user
         auth()->login($user);
+
+        if ($provider == 'google') {
+            // update user google metadata
+            $user->setGoogleMetadata(
+                $socialUser->getId(),
+                $socialUser->token,
+                $socialUser->refreshToken,
+                $socialUser->expiresIn,
+            );
+        }
+
         // redirect to the app
         return redirect('/dashboard');
     }

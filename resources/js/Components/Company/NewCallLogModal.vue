@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { usePage, useForm } from '@inertiajs/vue3';
 
 import DialogModal from '@/Components/DialogModal.vue';
@@ -8,9 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 
+import axios from 'axios';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import axios from 'axios';
 
 dayjs.extend(relativeTime);
 
@@ -26,6 +26,9 @@ const page = usePage();
 const callStatuses = ref(page.props.callStatuses.filter(s => s.status != 'Unprocessed').reverse());
 const consultants = ref(page.props.consultants);
 const contactNumbers = ref(props.company.contact_numbers.map(contact => ({ value: contact.number, label: contact.label })) ?? []);
+const consultantMeetings = ref([]);
+const consultantTimeslots = ref([]);
+const consultantAvailability = ref([]);
 
 const querySearch = (queryString, cb) => {
     const results = queryString ? contactNumbers.value.filter(createFilter(queryString)) : contactNumbers.value;
@@ -39,46 +42,24 @@ const createFilter = (queryString) => {
     };
 };
 
+let contact_number = '';
+if (props.company.contact_numbers.length > 0) {
+    contact_number = props.company.contact_numbers[0].number;
+}
+
 const form = useForm({
     company_id: props.company.id,
-    contact_number: props.company.contact_numbers.length > 0 ? props.company.contact_numbers[0].number : '',
+    contact_number,
+    meeting_email: '',
     status: '',
     called_at: dayjs().toString(),
     follow_up_at: '',
+    follow_up_time: '',
     appointment_at: '',
+    appointment_time: '',
     consultant_id: '',
-    meeting_email: '',
     source: 'dashboard'
 });
-
-const disabledPastDates = (time) => {
-    const date = new Date();
-    const previousDate = date.setDate(date.getDate() - 1);
-    return time.getTime() < previousDate;
-}
-
-const shortcuts = [
-    {
-        text: 'Today',
-        value: new Date(),
-    },
-    {
-        text: 'Tomorrow',
-        value: () => {
-            const date = new Date()
-            date.setTime(date.getTime() + 3600 * 1000 * 24)
-            return date
-        },
-    },
-    {
-        text: 'Next week',
-        value: () => {
-            const date = new Date()
-            date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
-            return date
-        },
-    },
-]
 
 const closeModal = () => {
     form.clearErrors();
@@ -90,8 +71,7 @@ const saveCallLog = async () => {
     form.clearErrors();
     try {
         const response = await axios.post(route('calls.store', {
-            ...form.data(),
-            _token: page.props.csrf_token
+            ...form.data()
         }));
         form.reset();
         closeModal();
@@ -104,6 +84,99 @@ const saveCallLog = async () => {
         form.setError(errors);
     }
 };
+
+const selectedConsultant = async (consultantId) => {
+    if (consultantId) {
+        form.appointment_at = '';
+        const response = await axios.post(route('user-events.list', { user_id: consultantId }), {
+            upcoming: true
+        });
+
+        consultantMeetings.value = response.data.meetings;
+        consultantTimeslots.value = response.data.timeslots;
+        consultantAvailability.value = response.data.availability;
+    }
+};
+
+const disabledDates = (time) => {
+    const date = new Date();
+    // const previousDate = date.setDate(date.getDate() - 1);
+    const todayDate = date.setDate(date.getDate());
+    let disabledRules = null;
+    let daysOfWeek = page.props.auth.user.availability.days_of_week;
+    let timeslots = page.props.auth.user.timeslots;
+    let upcomingMeetings = page.props.auth.user.upcoming_meetings;
+
+    if (form.consultant_id) {
+        daysOfWeek = consultantAvailability.value.days_of_week;
+        timeslots = consultantTimeslots.value;
+        upcomingMeetings = consultantMeetings.value;
+
+        if (daysOfWeek == undefined || timeslots == undefined || upcomingMeetings == undefined) {
+            return false;
+        }
+    }
+
+    const nonWorkDays = Object.keys(daysOfWeek).filter(k => !daysOfWeek[k]);
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    nonWorkDays.forEach((day) => {
+        if (disabledRules == null) {
+            disabledRules = time.getDay() == weekdays.indexOf(day);
+        } else {
+            disabledRules = disabledRules || time.getDay() == weekdays.indexOf(day);
+        }
+    });
+    if (upcomingMeetings.length) {
+        const minDate = new Date(Math.min(...upcomingMeetings.map(meeting => new Date(meeting.start))));
+        const maxDate = new Date(Math.max(...upcomingMeetings.map(meeting => new Date(meeting.start))));
+        let currDate = new Date(minDate);
+        while (currDate <= maxDate) {
+            let currTimeslots = timeslots;
+            const currMeetings = upcomingMeetings.filter(meeting => dayjs(currDate).isSame(dayjs(meeting.start), 'day'));
+            currMeetings.forEach((meeting) => {
+                const meetingStart = dayjs(meeting.start);
+                currTimeslots = currTimeslots.filter(timeslot => timeslot.start != meetingStart.format('HH:mm'));
+            });
+            if (currTimeslots.length == 0) {
+                disabledRules = disabledRules || dayjs(time).format('MM-DD-YYYY') == dayjs(currDate).format('MM-DD-YYYY');
+            }
+
+            const newDate = currDate.setDate(currDate.getDate() + 1);
+            currDate = new Date(newDate);
+        }
+    }
+
+    if (disabledRules == null) {
+        disabledRules = true;
+    }
+
+    return time.getTime() < todayDate || (disabledRules);
+};
+
+const timeslots = computed(() => {
+    let userTimeslots = page.props.auth.user.timeslots;
+    let upcomingMeetings = page.props.auth.user.upcoming_meetings;
+    let selectedDate = null;
+    if (form.consultant_id) {
+        userTimeslots = consultantTimeslots.value;
+        upcomingMeetings = consultantMeetings.value;
+    }
+    if (form.status == 'Call again on Date' && form.follow_up_at) {
+        selectedDate = form.follow_up_at;
+    }
+    if (form.status == 'Set Appointment Date' && form.appointment_at) {
+        selectedDate = form.appointment_at;
+    }
+
+    if (upcomingMeetings && selectedDate) {
+        const currMeetings = upcomingMeetings.filter(meeting => dayjs(selectedDate).isSame(dayjs(meeting.start), 'day'));
+        currMeetings.forEach((meeting) => {
+            const meetingStart = dayjs(meeting.start);
+            userTimeslots = userTimeslots.filter(timeslot => timeslot.start != meetingStart.format('HH:mm'));
+        });
+    }
+    return userTimeslots;
+});
 
 watch(
     () => props.company,
@@ -133,7 +206,7 @@ watch(
         <template #content>
             <div class="grid gap-4 md:grid-cols-2 md:gap-6">
                 <div>
-                    <InputLabel for="contactNumber" value="Contact Number" />
+                    <InputLabel for="contactNumber" value="Contact Number *" />
                     <el-autocomplete id="contactNumber" v-model="form.contact_number" :fetch-suggestions="querySearch"
                         clearable placeholder="Input Contact Number" class="w-full" aria-autocomplete="off"
                         autocomplete="off">
@@ -145,14 +218,14 @@ watch(
                     <InputError :message="form.errors.contact_number" class="mt-2" />
                 </div>
                 <div>
-                    <InputLabel for="calledAt" value="Call date and time" />
+                    <InputLabel for="calledAt" value="Call date and time *" />
                     <el-date-picker id="calledAt" v-model="form.called_at" type="datetime"
-                        placeholder="Select call date and time" :shortcuts="shortcuts" class="w-full" />
+                        placeholder="Select call date and time" class="w-full" />
                     <InputError :message="form.errors.called_at" class="mt-2" />
                 </div>
 
                 <div>
-                    <InputLabel for="callStatus" value="Status" />
+                    <InputLabel for="callStatus" value="Status *" />
                     <el-select id="callStatus" v-model="form.status" filterable clearable placeholder="Select Call Status"
                         class="w-full" aria-autocomplete="off">
                         <el-option v-for="status in callStatuses" :key="status.id" :label="status.status"
@@ -160,29 +233,32 @@ watch(
                     </el-select>
                     <InputError :message="form.errors.status" class="mt-2" />
                 </div>
+
                 <div v-if="form.status == 'Call again on Date'">
-                    <InputLabel for="followUpAt" value="Follow up date and time" />
-                    <el-date-picker id="followUpAt" v-model="form.follow_up_at" type="datetime"
-                        placeholder="Select follow up date" :disabled-date="disabledPastDates" :shortcuts="shortcuts"
-                        class="!w-full" />
+                    <InputLabel for="followUpAt" value="Follow up date *" />
+                    <el-date-picker id="followUpAt" v-model="form.follow_up_at" type="date"
+                        @change="form.follow_up_time = null" placeholder="Select follow up date"
+                        :disabled-date="disabledDates" class="!w-full" />
                     <InputError :message="form.errors.follow_up_at" class="mt-2" />
-                </div>
-                <div v-if="form.status == 'Set Appointment Date'">
-                    <InputLabel for="appointmentAt" value="Appointment date and time" />
-                    <el-date-picker id="appointmentAt" v-model="form.appointment_at" type="datetime"
-                        placeholder="Select appointment" :disabled-date="disabledPastDates" :shortcuts="shortcuts"
-                        class="!w-full" />
-                    <InputError :message="form.errors.appointment_at" class="mt-2" />
                 </div>
 
                 <div v-if="form.status == 'Set Appointment Date'">
-                    <InputLabel for="consultant" value="Consultant" />
+                    <InputLabel for="consultant" value="Consultant *" />
                     <el-select id="consultant" v-model="form.consultant_id" filterable clearable
-                        placeholder="Select Consultant" class="!w-full" aria-autocomplete="off">
+                        @change="selectedConsultant" placeholder="Select Consultant" class="!w-full"
+                        aria-autocomplete="off">
                         <el-option v-for="consultant in consultants" :key="consultant.id" :label="consultant.name"
                             :value="consultant.id" />
                     </el-select>
                     <InputError :message="form.errors.consultant_id" class="mt-2" />
+                </div>
+
+                <div v-if="form.status == 'Set Appointment Date'">
+                    <InputLabel for="appointmentAt" value="Appointment date *" />
+                    <el-date-picker id="appointmentAt" v-model="form.appointment_at" type="date"
+                        @change="form.appointment_time = null" placeholder="Select appointment"
+                        :disabled-date="disabledDates" class="!w-full" />
+                    <InputError :message="form.errors.appointment_at" class="mt-2" />
                 </div>
 
                 <div v-if="form.status == 'Set Appointment Date' || form.status == 'Call again on Date'">
@@ -190,6 +266,26 @@ watch(
                     <el-input id="googleMeetEmail" v-model="form.meeting_email" clearable
                         placeholder="Add email for google meet" class="w-full" aria-autocomplete="off" />
                     <InputError :message="form.errors.meeting_email" class="mt-2" />
+                </div>
+
+                <div v-if="form.status == 'Call again on Date'">
+                    <InputLabel for="followUpTime" value="Follow up time *" />
+                    <el-select id="followUpTime" v-model="form.follow_up_time" filterable clearable
+                        placeholder="Select Timeslot" class="!w-full" aria-autocomplete="off">
+                        <el-option v-for="(timeslot, idx) in timeslots" :key="`followUpTime${idx}`"
+                            :label="`${timeslot.start} - ${timeslot.end}`" :value="timeslot.start" />
+                    </el-select>
+                    <InputError :message="form.errors.follow_up_time" class="mt-2" />
+                </div>
+
+                <div v-if="form.status == 'Set Appointment Date'">
+                    <InputLabel for="appointmentAt" value="Appointment Time *" />
+                    <el-select id="appointmentTime" v-model="form.appointment_time" filterable clearable
+                        placeholder="Select Timeslot" class="!w-full" aria-autocomplete="off">
+                        <el-option v-for="(timeslot, idx) in timeslots" :key="`followUpTime${idx}`"
+                            :label="`${timeslot.start} - ${timeslot.end}`" :value="timeslot.start" />
+                    </el-select>
+                    <InputError :message="form.errors.appointment_time" class="mt-2" />
                 </div>
             </div>
         </template>

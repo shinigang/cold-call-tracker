@@ -7,11 +7,11 @@ import ContactNumbers from '@/Components/Company/ContactNumbers.vue';
 import CompanyCalls from '@/Components/Company/CompanyCalls.vue';
 import ActionLogs from '@/Components/Company/ActionLogs.vue';
 import AssignmentLogs from '@/Components/Company/AssignmentLogs.vue';
-import DiscussionLogs from '@/Components/Company/DiscussionLogs.vue';
+import Comments from '@/Components/Discussions/Comments.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 import InputError from '@/Components/InputError.vue';
 import { ArrowRight, Delete } from '@element-plus/icons-vue';
-import { debounce } from 'lodash';
+import { debounce, fromPairs } from 'lodash';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -64,7 +64,8 @@ const form = useForm({
         call_status: props.company.call_status,
         calls: props.company.calls ?? [],
         action_logs: props.company.action_logs ?? [],
-        assignments: props.company.assignments ?? []
+        assignments: props.company.assignments ?? [],
+        comments: props.company.comments ?? []
     }
 });
 
@@ -99,6 +100,11 @@ const updateCompany = debounce(async (company, $event, field) => {
         }
     }
 }, 500);
+
+const onCommentAdded = (newCommentResponse) => {
+    form.company.comments = newCommentResponse.comments;
+    emit('companyUpdated', newCommentResponse.company);
+};
 
 const onCallAdded = (newCallResponse) => {
     form.company.calls = newCallResponse.company.calls;
@@ -140,7 +146,8 @@ watch(
             call_status: '',
             calls: [],
             action_logs: [],
-            assignments: []
+            assignments: [],
+            comments: [],
         };
         setTimeout(() => {
             form.clearErrors();
@@ -161,7 +168,7 @@ watch(
                         placeholder=" " required />
                     <label for="floating_name"
                         class="peer-focus:font-xs absolute text-3xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-[.5] top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-indigo-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-[.5] peer-focus:-translate-y-7">
-                        Company Name*
+                        Company Name *
                     </label>
                     <InputError :message="form.errors.name" class="mt-2" />
                 </div>
@@ -212,7 +219,8 @@ watch(
                                 @numbers-updated="onCompanyUpdated" />
                         </el-collapse-item>
                         <el-collapse-item title="Comments" name="comments">
-                            <DiscussionLogs :comments="company.comments" class="!p-0" />
+                            <Comments :comments="form.company.comments" :commentable-id="company.id"
+                                commentable-type="Company" class="!p-0" @comment-added="onCommentAdded" />
                         </el-collapse-item>
                     </el-collapse>
                 </div>

@@ -1,23 +1,30 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import SectionBorder from '@/Components/SectionBorder.vue';
 
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 
+const props = defineProps(['meetings']);
+
+const handleDateClick = (info) => {
+    info.jsEvent.preventDefault();
+    if (info.event.url) {
+        window.open(info.event.url);
+    }
+};
+
 const calendarOptions = {
     plugins: [dayGridPlugin, listPlugin],
     initialView: 'dayGridMonth',
     weekends: false,
-    events: [
-        { title: 'Meeting', start: new Date() }
-    ],
+    events: props.meetings,
     headerToolbar: {
         left: 'prev,next',
         center: 'title',
         right: 'dayGridMonth,dayGridWeek,dayGridDay,listYear'
-    }
+    },
+    eventClick: handleDateClick
 };
 </script>
 

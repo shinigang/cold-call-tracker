@@ -57,10 +57,10 @@ class JetstreamServiceProvider extends ServiceProvider
             'update',
             'call:create',
             'call:update',
-        ])->description(__('Caller users have the ability to manage call logs, read and update company status.'));
+        ])->description(__('Caller users have the ability to manage call logs, read and update company details.'));
 
         Jetstream::role('consultant', __('Web Consultant'), [
             'read',
-        ])->description(__('Web Consultant users have the ability to read and update company data.'));
+        ])->description(__('Web Consultant users have the ability to read company appointments.'));
     }
 }

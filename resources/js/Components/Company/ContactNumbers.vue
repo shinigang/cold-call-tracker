@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { usePage, useForm } from '@inertiajs/vue3';
-import { Delete, Select } from '@element-plus/icons-vue';
+import { Delete, Select, Warning } from '@element-plus/icons-vue';
 import { debounce } from 'lodash';
 
 import FloatingLabel from '@/Components/FloatingLabel.vue';
@@ -143,9 +143,21 @@ watch(
             <InputError :message="form.errors[`contact_numbers.${index}.label`]" class="mt-2" />
             <InputError :message="form.errors[`contact_numbers.${index}.number`]" class="mt-2" />
         </div>
-        <el-empty v-else description="No Contact Numbers" class="!p-0 mb-2" />
+        <el-empty v-else description="No Contact Numbers" class="!p-0 mb-2">
+            <template #image>
+                <p align="center" class="m-0">
+                    <Warning class="text-center !w-12 !h-12" />
+                </p>
+            </template>
+        </el-empty>
         <button @click="addNumber"
             class="w-full text-sm py-1 mt-2 font-bold rounded-md text-center border-dashed border-2 border-gray-300 dark:border-gray-700 hover:border-gray-500 dark:hover:border-gray-600 text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">+
             Add Contact Number</button>
     </div>
 </template>
+
+<style>
+.company-contact-numbers .el-empty__description {
+    margin-top: 4px;
+}
+</style>

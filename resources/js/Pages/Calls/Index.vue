@@ -1,19 +1,33 @@
 <script setup>
+import { useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { Search } from '@element-plus/icons-vue';
+import { debounce } from 'lodash';
 
 dayjs.extend(relativeTime);
 dayjs.extend(localizedFormat);
 
-defineProps(['calls']);
+const props = defineProps(['calls', 'keyword']);
+
+const form = useForm({
+    keyword: props.keyword
+});
 
 const downloadExport = () => {
     window.location.href = route('calls.export');
 };
+
+const search = debounce(() => {
+    form.get(route('calls.index'), {
+        preserveState: true,
+        preserveScroll: true
+    });
+}, 500);
 </script>
 
 <template>
@@ -26,11 +40,22 @@ const downloadExport = () => {
 
         <div class="py-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-                <div class="text-right mb-2">
-                    <PrimaryButton type="button" :disabled="calls.data.length == 0" class="ms-2" @click="downloadExport">
-                        Export
-                    </PrimaryButton>
+                <div class="flex flex-col lg:flex-row gap-2 lg:gap-10 justify-center items-center mb-2">
+                    <div class="grow">
+                        <el-input v-model="form.keyword"
+                            placeholder="Search calls by contact no., company name, caller name or call status..."
+                            @input="search" clearable class="focus:outline-0 focus:shadow-none">
+                            <template #append>
+                                <el-button :icon="Search" />
+                            </template>
+                        </el-input>
+                    </div>
+                    <div class="text-right">
+                        <PrimaryButton type="button" :disabled="calls.data.length == 0" class="ms-2"
+                            @click="downloadExport">
+                            Export
+                        </PrimaryButton>
+                    </div>
                 </div>
 
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-
+import { Warning } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -22,7 +22,7 @@ const modifiedAssignments = computed(() => {
 </script>
 
 <template>
-    <div class="px-[10px]">
+    <div class="assignment-logs-box px-[10px]">
         <el-timeline v-if="modifiedAssignments.length > 0">
             <el-timeline-item v-for="(assignment, index) in  modifiedAssignments " :key="index" :hollow="index != 0"
                 :type="index == 0 ? 'primary' : ''" :timestamp="`${dayjs(assignment.timestamp).fromNow()}`">
@@ -32,6 +32,18 @@ const modifiedAssignments = computed(() => {
                 </template>
             </el-timeline-item>
         </el-timeline>
-        <el-empty v-else description="No Assignments" />
+        <el-empty v-else description="No Assignments" class="!p-0 mb-2">
+            <template #image>
+                <p align="center" class="m-0">
+                    <Warning class="text-center !w-12 !h-12" />
+                </p>
+            </template>
+        </el-empty>
     </div>
 </template>
+
+<style>
+.assignment-logs-box .el-empty__description {
+    margin-top: 4px;
+}
+</style>

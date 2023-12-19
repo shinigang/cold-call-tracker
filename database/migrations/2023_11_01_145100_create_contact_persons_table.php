@@ -14,11 +14,7 @@ return new class extends Migration
         Schema::create('contact_persons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->string('prefix')->nullable();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
-            $table->string('suffix')->nullable();
+            $table->string('name');
             $table->string('position')->nullable();
             $table->string('email')->nullable();
             $table->boolean('verified')->default(0);

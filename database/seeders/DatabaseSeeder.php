@@ -30,7 +30,21 @@ class DatabaseSeeder extends Seeder
                     'name' => config('app.superuser_name'),
                     'email' => config('app.superuser_email'),
                     'current_team_id' => 1,
-                    'password' => Hash::make(config('app.superuser_pass'))
+                    'password' => Hash::make(config('app.superuser_pass')),
+                    'availability' => [
+                        'days_of_week' => [
+                            'sun' => false,
+                            'mon' => true,
+                            'tue' => true,
+                            'wed' => true,
+                            'thu' => true,
+                            'fri' => true,
+                            'sat' => false
+                        ],
+                        'shift_start' => '08:00',
+                        'shift_end' => '17:00',
+                        'meeting_duration' => 30
+                    ]
                 ]), function (User $user) {
                     $user->ownedTeams()->save(Team::forceCreate([
                         'user_id' => $user->id,

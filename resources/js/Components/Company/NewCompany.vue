@@ -101,7 +101,7 @@ onMounted(focusNameInput);
                         placeholder=" " required />
                     <label for="companyName"
                         class="peer-focus:font-xs absolute text-3xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-[.5] top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-indigo-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-[.5] peer-focus:-translate-y-7">
-                        Company Name*
+                        Company Name *
                     </label>
                     <InputError :message="form.errors.name" class="mt-2" />
                 </div>

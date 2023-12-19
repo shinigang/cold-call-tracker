@@ -37,7 +37,7 @@ const getStatusColor = (status) => {
 };
 
 const addCompany = () => {
-    router.visit(route('dashboard'), { data: { new: true } });
+    router.visit(route('dashboard'), { data: { newCompany: true } });
 };
 
 const downloadExport = () => {
@@ -72,10 +72,10 @@ const destroy = (company) => {
             });
         })
         .catch(() => {
-            // console.log('remove canceled');
+            // console.log('remove cancelled');
             // ElMessage({
             //     type: 'info',
-            //     message: 'Remove canceled',
+            //     message: 'Remove cancelled',
             // });
         });
 };

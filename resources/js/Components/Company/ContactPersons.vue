@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { usePage, useForm } from '@inertiajs/vue3';
-import { Delete, Select } from '@element-plus/icons-vue';
+import { Delete, Select, Warning } from '@element-plus/icons-vue';
 import { debounce } from 'lodash';
 
 import FloatingLabel from '@/Components/FloatingLabel.vue';
@@ -20,12 +20,9 @@ const form = useForm({
 const addPerson = () => {
     form.contact_persons.push({
         id: '',
-        prefix: '',
-        first_name: '',
-        middle_name: '',
-        last_name: '',
-        suffix: '',
+        name: '',
         position: '',
+        email: '',
         verified: false
     });
 };
@@ -76,7 +73,9 @@ const onSave = async (index) => {
         person.id = response.data.person.id;
         emit('personsUpdated', response.data.company);
     } catch (e) {
-        form.errors.contact_persons = e.response.data.errors.contact_persons;
+        form.errors[`contact_persons.${index}.name`] = e.response.data.errors.name ? e.response.data.errors.name[0] : '';
+        form.errors[`contact_persons.${index}.position`] = e.response.data.errors.position ? e.response.data.errors.position[0] : '';
+        form.errors[`contact_persons.${index}.email`] = e.response.data.errors.email ? e.response.data.errors.email[0] : '';
     }
 };
 
@@ -98,6 +97,13 @@ watch(
         }, 1);
     }
 );
+
+watch(
+    () => props.errors,
+    (errors) => {
+        form.errors = errors;
+    }
+);
 </script>
 
 <template>
@@ -110,16 +116,9 @@ watch(
                 </button>
                 <div class="flex-1">
                     <div class="relative z-0 w-full group">
-                        <FloatingInput type="text" v-model="person.first_name" :id="`personFirstname${index + 1}`"
-                            :name="`personFirstname${index + 1}`" @change="(e) => onInputChange()" />
-                        <FloatingLabel :for="`personFirstname${index + 1}`" value="First Name" />
-                    </div>
-                </div>
-                <div class="flex-1">
-                    <div class="relative z-0 w-full group">
-                        <FloatingInput type="text" v-model="person.last_name" :id="`personLastname${index + 1}`"
-                            :name="`personLastname${index + 1}`" @change="(e) => onInputChange()" />
-                        <FloatingLabel :for="`personLastname${index + 1}`" value="Last Name" />
+                        <FloatingInput type="text" v-model="person.name" :id="`personName${index + 1}`"
+                            :name="`personName${index + 1}`" @change="(e) => onInputChange()" />
+                        <FloatingLabel :for="`personName${index + 1}`" value="Name *" />
                     </div>
                 </div>
                 <div class="flex-1">
@@ -127,6 +126,13 @@ watch(
                         <FloatingInput type="text" v-model="person.position" :id="`personPosition${index + 1}`"
                             :name="`personPosition${index + 1}`" @change="(e) => onInputChange()" />
                         <FloatingLabel :for="`personPosition${index + 1}`" value="Position" />
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div class="relative z-0 w-full group">
+                        <FloatingInput type="text" v-model="person.email" :id="`personEmail${index + 1}`"
+                            :name="`personEmail${index + 1}`" @change="(e) => onInputChange()" />
+                        <FloatingLabel :for="`personEmail${index + 1}`" value="Email" />
                     </div>
                 </div>
                 <div class="flex-1">
@@ -144,14 +150,28 @@ watch(
                     </el-button>
                 </div>
             </div>
-            <InputError :message="form.errors[`contact_persons.${index}.first_name`]" class="mt-2" />
-            <InputError :message="form.errors[`contact_persons.${index}.last_name`]" class="mt-2" />
-            <InputError :message="form.errors[`contact_persons.${index}.position`]" class="mt-2" />
+            <div v-if="form.errors">
+                <InputError :message="form.errors[`contact_persons.${index}.name`]" class="mt-2" />
+                <InputError :message="form.errors[`contact_persons.${index}.position`]" class="mt-2" />
+                <InputError :message="form.errors[`contact_persons.${index}.email`]" class="mt-2" />
+            </div>
         </div>
-        <el-empty v-else description="No Contact Persons" class="!p-0 mb-2" />
+        <el-empty v-else description="No Contact Persons" class="!p-0 mb-2">
+            <template #image>
+                <p align="center" class="m-0">
+                    <Warning class="text-center !w-12 !h-12" />
+                </p>
+            </template>
+        </el-empty>
         <button @click="addPerson"
             class="w-full text-sm py-1 mt-2 font-bold rounded-md text-center border-dashed border-2 border-gray-300 dark:border-gray-700 hover:border-gray-500 dark:hover:border-gray-600 text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">+
             Add Contact Person
         </button>
     </div>
 </template>
+
+<style>
+.company-contact-persons .el-empty__description {
+    margin-top: 4px;
+}
+</style>

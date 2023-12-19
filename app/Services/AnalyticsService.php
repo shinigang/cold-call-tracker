@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Models\Call;
 use App\Models\User;
-// use App\Models\Company;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Collection;
 
 class AnalyticsService
 {
@@ -15,8 +13,9 @@ class AnalyticsService
     {
         $stats = [];
         $analyticsType = request()->input('stats_type') ?? 'all';
+        $durationDays = request()->input('duration') ?? 0;
+
         if ($analyticsType == 'calls' || $analyticsType == 'all') {
-            $durationDays = request()->input('duration') ?? 0;
             $totalCalls = 0;
             $prevTotalCalls = 0;
             $successfulCalls = 0;
@@ -60,6 +59,27 @@ class AnalyticsService
             $stats = [
                 ...$stats,
                 'activeCallers' => User::where('metadata->logged_in', true)->whereDate('metadata->last_login_at', DB::raw('CURDATE()'))->get(),
+            ];
+        }
+
+        if ($analyticsType == 'consultants' || $analyticsType == 'all') {
+            $topConsultants = [];
+            if ($durationDays == 0) {
+                $topConsultants = User::query()->addSelect([
+                    'total_appointments' => Call::query()->select(DB::raw('count(*)'))->where('status', 'Set Appointment Date')->whereColumn('consultant_id', 'users.id')->take(1)
+                ])->having('total_appointments', '>', '0')->orderByRaw('total_appointments DESC')->limit(8)->get();
+            } else {
+                $topConsultants = User::query()->addSelect([
+                    'total_appointments' => Call::query()->select(DB::raw('count(*)'))->where('status', 'Set Appointment Date')->whereDate('called_at', '>=', now()->subDays($durationDays))->whereColumn('consultant_id', 'users.id')->take(1),
+                    'prev_total_appointments' => Call::query()->select(DB::raw('count(*)'))->where('status', 'Set Appointment Date')->whereDate('called_at', '<', now()->subDays($durationDays))->whereColumn('consultant_id', 'users.id')->take(1)
+                ])->having('total_appointments', '>', '0')->orderByRaw('total_appointments DESC')->limit(8)->get();
+            }
+
+            $stats = [
+                ...$stats,
+                'consultants' => [
+                    'topConsultants' => $topConsultants
+                ]
             ];
         }
 

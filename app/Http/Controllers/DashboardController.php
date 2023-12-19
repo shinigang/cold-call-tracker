@@ -16,7 +16,6 @@ class DashboardController extends Controller
 {
     public function index(AnalyticsService $analyticsService)
     {
-        $analytics = $analyticsService->getAnalytics();
         $selectedCompany = isset(request()->company) ? $this->selectCompany(request()->input('company')) : null;
         $companies = $this->searchCompany();
 
@@ -25,18 +24,19 @@ class DashboardController extends Controller
             return $companies;
         }
 
+        $analytics = $analyticsService->getAnalytics();
+
         $action = World::countries(['fields' => 'iso2']);
         $countries = [];
-
         if ($action->success) {
             $countries = Cache::rememberForever('countries', function () use ($action) {
                 return $action->data;
             });
         }
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Dashboard/Index', [
             'analytics' => $analytics,
-            'new' => request()->input('new') ?? 'false',
+            'newCompany' => request()->input('newCompany') ?? 'false',
             'company' => $selectedCompany,
             'companies' => $companies,
             'filters' => [
@@ -108,7 +108,7 @@ class DashboardController extends Controller
             'contactNumbers',
             'assignedCaller',
             'assignedConsultant',
-            'calendarEvents.user',
+            // 'calendarEvents.user',
             'calls.user',
             'comments.user',
             'actionLogs.user',

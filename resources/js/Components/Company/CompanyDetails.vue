@@ -191,11 +191,30 @@ watch(
         }
     }
 );
+watch(
+    () => props.errors,
+    (errors) => {
+        form.errors = errors;
+    }
+);
 </script>
 
 <template>
     <div class="company-details">
         <div class="grid gap-4 md:grid-cols-2 md:gap-6 mt-4">
+            <div class="relative z-0 w-full group">
+                <FloatingInput type="email" :value="form.company.email" id="email" name="email"
+                    @blur="(e) => updateCompany(company, e, 'email')" />
+                <FloatingLabel for="email" value="Email *" />
+                <InputError :message="form.errors.email" class="mt-2" />
+            </div>
+            <div class="relative z-0 w-full group">
+                <FloatingInput type="text" :value="form.company.website" id="website" name="website"
+                    @blur="(e) => updateCompany(company, e, 'website')" />
+                <FloatingLabel for="website" value="Website" />
+                <InputError :message="form.errors.website" class="mt-2" />
+            </div>
+
             <div class="relative z-0 w-full group">
                 <FloatingInput type="text" :value="form.company.industry" id="industry" name="industry"
                     @blur="(e) => updateCompany(company, e, 'industry')" />
@@ -207,19 +226,6 @@ watch(
                     name="total_employees" @blur="(e) => updateCompany(company, e, 'total_employees')" />
                 <FloatingLabel for="total_employees" value="Total Employees" />
                 <InputError :message="form.errors.total_employees" class="mt-2" />
-            </div>
-
-            <div class="relative z-0 w-full group">
-                <FloatingInput type="email" :value="form.company.email" id="email" name="email"
-                    @blur="(e) => updateCompany(company, e, 'email')" />
-                <FloatingLabel for="email" value="Email" />
-                <InputError :message="form.errors.email" class="mt-2" />
-            </div>
-            <div class="relative z-0 w-full group">
-                <FloatingInput type="text" :value="form.company.website" id="website" name="website"
-                    @blur="(e) => updateCompany(company, e, 'website')" />
-                <FloatingLabel for="website" value="Website" />
-                <InputError :message="form.errors.website" class="mt-2" />
             </div>
 
             <div class="relative z-0 w-full group">

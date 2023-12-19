@@ -19,7 +19,9 @@ class Call extends Model
     protected $fillable = ['user_id', 'company_id', 'contact_number', 'called_at', 'status', 'follow_up_at', 'appointment_at', 'consultant_id', 'meeting_email'];
 
     protected $casts = [
-        'called_at' => 'datetime'
+        'called_at' => 'datetime',
+        'follow_up_at' => 'datetime',
+        'appointment_at' => 'datetime'
     ];
 
     public function user(): BelongsTo

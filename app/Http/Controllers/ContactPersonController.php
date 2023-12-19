@@ -17,12 +17,9 @@ class ContactPersonController extends Controller
     {
         $validated = $request->validate([
             'company_id' => 'required',
-            'prefix' => 'nullable|string|max:100',
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'suffix' => 'nullable|string|max:100',
+            'name' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255',
             'verified' => 'nullable|boolean'
         ]);
         $person = ContactPerson::create($validated);
@@ -32,7 +29,7 @@ class ContactPersonController extends Controller
             $actionLog->company_id = $person->company_id;
             $actionLog->user_id = auth()->user()->id;
             $actionLog->action_type = 'added a contact person';
-            $actionLog->action_value = $person->first_name . ' ' . $person->last_name;
+            $actionLog->action_value = $person->name;
             $actionLog->save();
         }
 
@@ -64,12 +61,9 @@ class ContactPersonController extends Controller
     public function update(Request $request, ContactPerson $contactPerson)
     {
         $validated = $request->validate([
-            'prefix' => 'nullable|string|max:100',
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'suffix' => 'nullable|string|max:100',
+            'name' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255',
             'verified' => 'nullable|boolean'
         ]);
         $contactPerson->update($validated);
@@ -109,7 +103,7 @@ class ContactPersonController extends Controller
             $actionLog->company_id = $companyId;
             $actionLog->user_id = auth()->user()->id;
             $actionLog->action_type = 'removed a contact person';
-            $actionLog->action_value = $contactPerson->first_name . ' ' . $contactPerson->last_name;
+            $actionLog->action_value = $contactPerson->name;
             $actionLog->save();
         }
 

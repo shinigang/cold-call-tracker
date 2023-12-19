@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Company;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -28,7 +30,40 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'commentable_id' => 'required|integer',
+            'commentable_type' => 'required|string',
+        ]);
+        $modelName = Str::ucfirst($validated['commentable_type']);
+        $comment = Comment::create([
+            'user_id' => auth()->id(),
+            'body' => $validated['comment'],
+            'commentable_id' => $validated['commentable_id'],
+            'commentable_type' => 'App\\Models\\' . $modelName,
+        ]);
+
+        $comment = Comment::with('user')->whereId($comment->id)->first();
+
+        if ($request->wantsJson() && $modelName == 'Company') {
+            $companyRelationships = [
+                'contactPersons',
+                'contactNumbers',
+                'assignedCaller',
+                'assignedConsultant',
+                // 'calendarEvents.user',
+                'calls.user',
+                'comments.user',
+                'actionLogs.user',
+                'assignments.user',
+            ];
+            return [
+                'company' => Company::with($companyRelationships)->whereId($validated['commentable_id'])->first(),
+                'comment' => $comment
+            ];
+        } else {
+            return $comment;
+        }
     }
 
     /**

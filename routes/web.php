@@ -1,18 +1,21 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\CalendarEventController;
+
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
 use App\Http\Controllers\CallController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\SocialController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\ContactNumberController;
 use App\Http\Controllers\ContactPersonController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SocialController;
-use Spatie\GoogleCalendar\Event;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\LinkedWithGoogleMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,30 +31,6 @@ use Spatie\GoogleCalendar\Event;
 Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])->where('provider', 'google|facebook|github');
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])->where('provider', 'google|facebook|github');
 
-Route::get('/gcalendar-events', function () {
-    return Event::get();
-});
-
-Route::get('/gcalendar-events-add', function () {
-    $event = new Event;
-
-    $event->name = 'Appointment event';
-    $event->description = 'Test new appointment event';
-    $event->startDateTime = Carbon\Carbon::tomorrow();
-    $event->endDateTime = Carbon\Carbon::tomorrow()->addHour();
-    $event->addAttendee([
-        'email' => 'guanlao.sherwin@gmail.com',
-        'name' => 'Urban Gulaman',
-        'comment' => 'Lorum ipsum',
-        'responseStatus' => 'needsAction',
-    ]);
-    $event->addAttendee(['email' => 'sherwin.bunshin@gmail.com']);
-    $event->addMeetLink();
-
-    $event->save();
-    return dd($event);
-});
-
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -66,7 +45,11 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::inertia('/auth/google', 'Auth/GoogleAuth')->name('google.auth');
+
+    Route::put('/user/availability', [UserController::class, 'updateAvailability'])->name('user-availability.update');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(LinkedWithGoogleMiddleware::class)->name('dashboard');
     Route::get('/dashboard/company-search', [DashboardController::class, 'searchCompany'])->name('dashboard.searchCompany');
     Route::post('/dashboard/company/{id}', [DashboardController::class, 'company'])->name('dashboard.company');
     Route::post('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
@@ -80,10 +63,12 @@ Route::middleware([
     Route::get('calls-export', [CallController::class, 'export'])->name('calls.export');
 
     Route::resource('calendar-events', CalendarEventController::class)->only(['show', 'store', 'update', 'destroy']);
+    Route::post('/user-calendar-events/{user_id}', [CalendarEventController::class, 'userMeetings'])->name('user-events.list');
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
 
     Route::resource('contact-persons', ContactPersonController::class)->only(['store', 'update', 'destroy']);
     Route::resource('contact-numbers', ContactNumberController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('comment', CommentController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::post('/chat/search-contacts', [ChatController::class, 'searchContacts'])->name('chat.search-contacts');

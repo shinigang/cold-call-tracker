@@ -1,7 +1,7 @@
 <script setup>
 // import { computed } from 'vue';
 // import { useForm } from '@inertiajs/vue3';
-import { Watch } from '@element-plus/icons-vue';
+import { Watch, User } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -17,7 +17,7 @@ const hasNoFilters = (metadata) => {
 </script>
 
 <template>
-    <div>
+    <div class="active-callers-box">
         <p
             class="flex justify-start items-center border-y border-gray-200 dark:border-gray-700 dark:bg-gray-700 py-2 ps-3 -mx-[9px] -mt-[8px]">
             <el-tag size="small" effect="dark" round class="me-2 font-semibold !bg-indigo-500 !border-indigo-500">{{
@@ -26,7 +26,7 @@ const hasNoFilters = (metadata) => {
         </p>
 
         <el-scrollbar height="210px">
-            <ul role="list" class="divide-y divide-dashed divide-gray-200 dark:divide-gray-700">
+            <ul v-if="callers.length > 0" role="list" class="divide-y divide-dashed divide-gray-200 dark:divide-gray-700">
                 <li v-for="caller in callers" :key="caller.id" class="py-2 sm:py-3">
                     <div class="flex items-start space-x-3 rtl:space-x-reverse">
                         <div class="flex-shrink-0 items-start relative">
@@ -60,6 +60,19 @@ const hasNoFilters = (metadata) => {
                     </div>
                 </li>
             </ul>
+            <el-empty v-else description="No active callers." class="mb-2">
+                <template #image>
+                    <p align="center" class="m-0">
+                        <User class="!w-12 !h-12" />
+                    </p>
+                </template>
+            </el-empty>
         </el-scrollbar>
     </div>
 </template>
+
+<style>
+.active-callers-box .el-empty__description {
+    margin-top: 4px;
+}
+</style>

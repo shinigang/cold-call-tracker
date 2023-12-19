@@ -57,7 +57,8 @@ const logout = () => {
                                     :href="route('companies.index')" :active="route().current('companies.index')">
                                     Companies
                                 </NavLink>
-                                <NavLink v-if="['admin', 'owner'].includes($page.props.authUserCurrentTeam.role.key)"
+                                <NavLink
+                                    v-if="['admin', 'owner', 'caller'].includes($page.props.authUserCurrentTeam.role.key)"
                                     :href="route('calls.index')" :active="route().current('calls.index')">
                                     Calls
                                 </NavLink>

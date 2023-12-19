@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
+import { Warning } from '@element-plus/icons-vue';
 import NewCallLogModal from '@/Components/Company/NewCallLogModal.vue';
 
 import dayjs from 'dayjs';
@@ -38,7 +39,7 @@ watch(
 </script>
 
 <template>
-    <div class="px-[10px] pt-3">
+    <div class="calls-box px-[10px] pt-3">
         <button @click="modalVisible = true"
             class="w-full text-sm py-1 mb-3 font-bold rounded-md text-center border-dashed border-2 border-gray-300 dark:border-gray-700 hover:border-gray-500 dark:hover:border-gray-600 text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">+
             Add Call Log</button>
@@ -55,8 +56,20 @@ watch(
                 </p>
             </el-timeline-item>
         </el-timeline>
-        <el-empty v-else description="No Calls" class="!py-0 mb-2" />
+        <el-empty v-else description="No Calls" class="!py-0 mb-2">
+            <template #image>
+                <p align="center" class="m-0">
+                    <Warning class="text-center !w-12 !h-12" />
+                </p>
+            </template>
+        </el-empty>
 
         <NewCallLogModal :show="modalVisible" :company="company" @call-added="onCallAdded" @modal-closed="onModalClosed" />
     </div>
 </template>
+
+<style>
+.calls-box .el-empty__description {
+    margin-top: 4px;
+}
+</style>
