@@ -6,7 +6,7 @@ Call Tracker is a Mini CRM app for tracking cold calls to customers.
 
 1. Run Docker Desktop
 2. Clone this git repo to your Project folder (Using WSL2 file system for Windows Docker)
-3. Setup config file by copy-pasting .env.example to .env and update the socialite and pusher credentials:
+3. Setup config file by copy-pasting .env.example to .env and update credentials:
 
     ```
     cd cold-call-tracker
