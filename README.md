@@ -42,11 +42,6 @@ Call Tracker is a Mini CRM app for tracking cold calls to customers.
     sail artisan scout:import "App\Models\Company"
     ```
 
-7. Run google calendar quickstart script to generate oauth-token.json:
-    ```
-    sail artisan google-calendar:quickstart
-    ```
-
 ## Development
 
 1. Make sure Docker Desktop is running
