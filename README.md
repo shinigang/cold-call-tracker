@@ -31,6 +31,7 @@ Call Tracker is a Mini CRM app for tracking cold calls to customers.
     sail artisan migrate
     sail artisan db:seed
     sail artisan db:seed --class=WorldSeeder
+    sail artisan scout:sync-index-settings
     ```
 
 6. Run Factory and update meilisearch indexes (optional)

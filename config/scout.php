@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Company;
+
 return [
 
     /*
@@ -136,7 +138,7 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
-            'companies' => [
+            Company::class => [
                 'filterableAttributes' => ['id', 'name', 'call_status', 'address_street', 'address_city', 'address_state', 'address_country'],
                 'sortableAttributes' => ['name'],
             ],
