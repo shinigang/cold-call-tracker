@@ -16,7 +16,8 @@ class LinkedWithGoogleMiddleware
    */
   public function handle(Request $request, Closure $next)
   {
-    if (!$request->user()->google_metadata && $request->user()->id != 1)
+    // && $request->user()->id != 1
+    if (!$request->user()->google_metadata)
       return redirect()->route('google.auth');
 
     return $next($request);
