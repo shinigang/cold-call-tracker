@@ -39,17 +39,17 @@ class CreateNewUser implements CreatesNewUsers
                 'current_team_id' => 1,
                 'availability' => [
                     'days_of_week' => [
-                        'sun' => false,
-                        'mon' => true,
-                        'tue' => true,
-                        'wed' => true,
-                        'thu' => true,
-                        'fri' => true,
-                        'sat' => false
+                        'Sunday' => false,
+                        'Monday' => true,
+                        'Tuesday' => true,
+                        'Wednesday' => true,
+                        'Thursday' => true,
+                        'Friday' => true,
+                        'Saturday' => false
                     ],
                     'shift_start' => '08:00',
                     'shift_end' => '17:00',
-                    'meeting_duration' => 60
+                    'meeting_duration' => 30
                 ]
             ]), function (User $user) {
                 // $this->createTeam($user);

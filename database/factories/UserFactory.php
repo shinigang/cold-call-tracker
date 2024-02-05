@@ -31,6 +31,20 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => 1,
+            'availability' => [
+                'days_of_week' => [
+                    'Sunday' => false,
+                    'Monday' => true,
+                    'Tuesday' => true,
+                    'Wednesday' => true,
+                    'Thursday' => true,
+                    'Friday' => true,
+                    'Saturday' => false
+                ],
+                'shift_start' => '08:00',
+                'shift_end' => '17:00',
+                'meeting_duration' => 30
+            ]
         ];
     }
 

@@ -33,13 +33,13 @@ class DatabaseSeeder extends Seeder
                     'password' => Hash::make(config('app.superuser_pass')),
                     'availability' => [
                         'days_of_week' => [
-                            'sun' => false,
-                            'mon' => true,
-                            'tue' => true,
-                            'wed' => true,
-                            'thu' => true,
-                            'fri' => true,
-                            'sat' => false
+                            'Sunday' => false,
+                            'Monday' => true,
+                            'Tuesday' => true,
+                            'Wednesday' => true,
+                            'Thursday' => true,
+                            'Friday' => true,
+                            'Saturday' => false
                         ],
                         'shift_start' => '08:00',
                         'shift_end' => '17:00',
