@@ -62,15 +62,15 @@ const changeDuration = (interval) => {
             </ul>
         </div>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 w-full pt-2 gap-2.5">
-            <ConsultantStatCard v-for="consultant in analytics.topConsultants" :showInfo="duration != 0">
+            <ConsultantStatCard v-for="consultant in analytics.topConsultants" :key="consultant.id" :showInfo="duration != 0">
                 <template #photo>
                     <img :src="consultant.profile_photo_url" class="rounded-full " />
                 </template>
                 <template #name>
-                    <p class="text-right">
-                    <div class="font-semibold">{{ consultant.name }}</div>
-                    <span class="text-xs">{{ consultant.email }}</span>
-                    </p>
+                    <div class="text-right">
+                        <div class="font-semibold">{{ consultant.name }}</div>
+                        <span class="text-xs">{{ consultant.email }}</span>
+                    </div>
                 </template>
                 <template #value>
                     {{ consultant.total_appointments.toLocaleString() }}
