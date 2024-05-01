@@ -17,7 +17,7 @@ const handleDateClick = (info) => {
 const calendarOptions = {
     plugins: [dayGridPlugin, listPlugin],
     initialView: 'dayGridMonth',
-    weekends: false,
+    weekends: true,
     events: props.meetings,
     headerToolbar: {
         left: 'prev,next',

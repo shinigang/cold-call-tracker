@@ -151,7 +151,6 @@ class CallController extends Controller
                         $event_emails,
                     );
                 } catch (Exception $ex) {
-                    dd($ex);
                     return redirect()->back()->with([
                         'alert_type' => 'error',
                         'alert_message' => "Something happened please try again!"
@@ -296,6 +295,7 @@ class CallController extends Controller
             'user_id' => $user->id,
             'start' => $event_start,
             'end' => $event_end,
+            'emails' => json_encode($event_emails),
             'calendar_id' => $calendar_event->id,
             'calendar_link' => $calendar_event->htmlLink,
             'meet_link' => $calendar_event->hangoutLink

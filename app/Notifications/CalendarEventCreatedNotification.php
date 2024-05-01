@@ -58,7 +58,7 @@ class CalendarEventCreatedNotification extends Notification implements ShouldQue
     }
 
     return (new MailMessage)
-      ->subject("You have a booking placed with {$this->calendarEvent->booker_name}.")
+      ->subject("You have a {$this->calendarEvent->event_type} meeting with {$this->calendarEvent->company->name}.")
       ->greeting("Hello {$notifiable->name}")
       ->line("You have {$this->calendarEvent->event_type} meeting with {$this->calendarEvent->company->name}.")
       ->line("The meeting is scheduled on {$eventDate->toFormattedDateString()} at {$eventDate->format('h:i A')}.")

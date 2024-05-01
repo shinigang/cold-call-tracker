@@ -236,7 +236,7 @@ watch(
 
                 <div v-if="form.status == 'Call again on Date'">
                     <InputLabel for="followUpAt" value="Follow up date *" />
-                    <el-date-picker id="followUpAt" v-model="form.follow_up_at" type="date"
+                    <el-date-picker id="followUpAt" v-model="form.follow_up_at" type="date" value-format="YYYY-MM-DD"
                         @change="form.follow_up_time = null" placeholder="Select follow up date"
                         :disabled-date="disabledDates" class="!w-full" />
                     <InputError :message="form.errors.follow_up_at" class="mt-2" />
@@ -255,7 +255,7 @@ watch(
 
                 <div v-if="form.status == 'Set Appointment Date'">
                     <InputLabel for="appointmentAt" value="Appointment date *" />
-                    <el-date-picker id="appointmentAt" v-model="form.appointment_at" type="date"
+                    <el-date-picker id="appointmentAt" v-model="form.appointment_at" type="date" value-format="YYYY-MM-DD"
                         @change="form.appointment_time = null" placeholder="Select appointment"
                         :disabled-date="disabledDates" class="!w-full" />
                     <InputError :message="form.errors.appointment_at" class="mt-2" />
